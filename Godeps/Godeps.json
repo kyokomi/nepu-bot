@@ -1,0 +1,36 @@
+{
+	"ImportPath": "github.com/kyokomi/gobot",
+	"GoVersion": "go1.4",
+	"Deps": [
+		{
+			"ImportPath": "github.com/abachman/hipchat-go/hipchat",
+			"Rev": "86d96ff1a9cfea9cdac1e2f537e42983e7f41749"
+		},
+		{
+			"ImportPath": "github.com/boltdb/bolt",
+			"Comment": "v1.0-5-g33e7a07",
+			"Rev": "33e7a074e2c470b6d0b7ee23322a1c4cc759044b"
+		},
+		{
+			"ImportPath": "github.com/brettbuddin/campfire",
+			"Rev": "ec90b41304382064a1dc1ba311f8fe007248a561"
+		},
+		{
+			"ImportPath": "github.com/brettbuddin/httpie",
+			"Rev": "2fcbd79a669be641014cbd9659280816bfd4c259"
+		},
+		{
+			"ImportPath": "github.com/brettbuddin/victor",
+			"Comment": "v0.4.1-7-g47982dd",
+			"Rev": "47982dd7649e87fa86b9f270b84604006cffbc9d"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "14f550f51af52180c2eefed15e5fd18d63c0a64a"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "4b8fbc56f3b2400a7c7ea3dba9b3539787c486b6"
+		}
+	]
+}
