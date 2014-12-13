@@ -2,6 +2,7 @@ gobot
 =====
 
 slack hubot for Go!（golang）
+自分用です。
 
 # Setup
 
