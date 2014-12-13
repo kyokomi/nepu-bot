@@ -9,7 +9,7 @@ import (
 	"log"
 
 	"github.com/brettbuddin/victor"
-	"github.com/kyokomi/gobot/docomogo"
+	"github.com/kyokomi/nepu-bot/docomogo"
 )
 
 func main() {
