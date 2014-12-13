@@ -1,8 +1,8 @@
-gobot
+nepu-bot
 =====
 
 slack hubot for Go!（golang）
-自分用です。
+ネプテューヌBOT 自分用です。
 
 # Setup
 
