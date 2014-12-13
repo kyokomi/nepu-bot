@@ -15,6 +15,6 @@ $export VICTOR_SLACK_TOKEN={hubot token}
 
 ```
 $ go build
-$ ./gobot
+$ ./nepu-bot
 ```
 
