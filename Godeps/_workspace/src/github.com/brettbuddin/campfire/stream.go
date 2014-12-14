@@ -3,8 +3,9 @@ package campfire
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/brettbuddin/httpie"
 	"net/url"
+
+	"github.com/brettbuddin/httpie"
 )
 
 type Stream struct {

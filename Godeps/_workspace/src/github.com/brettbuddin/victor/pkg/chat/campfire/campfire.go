@@ -2,13 +2,14 @@ package campfire
 
 import (
 	"fmt"
-	"github.com/brettbuddin/campfire"
-	"github.com/brettbuddin/victor/pkg/chat"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/brettbuddin/campfire"
+	"github.com/brettbuddin/victor/pkg/chat"
 )
 
 const SHUTDOWN_DELAY = 5 * time.Second

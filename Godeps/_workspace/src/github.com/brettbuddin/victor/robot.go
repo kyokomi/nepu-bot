@@ -2,6 +2,10 @@ package victor
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"strings"
+
 	"github.com/brettbuddin/victor/pkg/chat"
 	_ "github.com/brettbuddin/victor/pkg/chat/campfire"
 	_ "github.com/brettbuddin/victor/pkg/chat/hipchat"
@@ -10,9 +14,6 @@ import (
 	"github.com/brettbuddin/victor/pkg/httpserver"
 	"github.com/brettbuddin/victor/pkg/store"
 	"github.com/gorilla/mux"
-	"log"
-	"os"
-	"strings"
 )
 
 type Robot interface {

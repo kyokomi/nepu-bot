@@ -3,8 +3,9 @@ package shell
 import (
 	"bufio"
 	"fmt"
-	"github.com/brettbuddin/victor/pkg/chat"
 	"os"
+
+	"github.com/brettbuddin/victor/pkg/chat"
 )
 
 func init() {

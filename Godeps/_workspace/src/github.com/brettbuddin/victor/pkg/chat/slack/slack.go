@@ -3,11 +3,12 @@ package slack
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/brettbuddin/victor/pkg/chat"
 	"log"
 	"net/http"
 	"net/url"
 	"os"
+
+	"github.com/brettbuddin/victor/pkg/chat"
 )
 
 func init() {

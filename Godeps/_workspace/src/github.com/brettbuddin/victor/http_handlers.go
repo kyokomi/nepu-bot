@@ -2,10 +2,11 @@ package victor
 
 import (
 	"fmt"
-	"github.com/brettbuddin/victor/pkg/httpserver"
-	"github.com/gorilla/mux"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/brettbuddin/victor/pkg/httpserver"
+	"github.com/gorilla/mux"
 )
 
 func handlers(bot Robot) *mux.Router {

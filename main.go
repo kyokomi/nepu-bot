@@ -9,8 +9,12 @@ import (
 	"log"
 
 	"github.com/brettbuddin/victor"
-	"github.com/kyokomi/nepu-bot/docomogo"
+	docomo "github.com/kyokomi/go-docomo"
+	"github.com/k0kubun/pp"
+	"strings"
 )
+
+var logger = log.New(os.Stderr, "nepu-bot", log.Llongfile)
 
 func main() {
 	bot := victor.New(victor.Config{
@@ -20,20 +24,35 @@ func main() {
 		HTTPAddr:     ":8000",
 	})
 
-	d := docomogo.NewDialogue()
+	d := docomo.New()
 
 	bot.HandleCommandFunc("hello|hi|howdy", func(s victor.State) {
 		s.Chat().Send(s.Message().ChannelID(), fmt.Sprintf("Hello, %s", s.Message().UserName()))
 	})
-	bot.HandleCommandFunc(".*", func(s victor.State) {
+	bot.HandleCommandFunc("image .*", func(s victor.State) {
+		pp.Println(s.Message())
 
-		res := d.Send(s.Message().Text())
+
+		// image 以降を取得する
+		d.SendImage(strings.TrimRight(s.Message().Text(), "image "))
+
+	})
+	bot.HandleCommandFunc(".*", func(s victor.State) {
+		pp.Println(s.Message())
+
+		res, err := d.SendZatsudan(s.Message().UserName(), s.Message().Text())
+		if err != nil {
+			logger.Println(err)
+			return
+		}
 
 		var resMap map[string]string
 		if err := json.Unmarshal(res, &resMap); err != nil {
-			log.Fatalln("Unmarshal ", err)
+			logger.Println("Unmarshal ", err)
+			return
 		}
 
+		// Send Slack
 		s.Chat().Send(s.Message().ChannelID(), resMap["utt"])
 	})
 

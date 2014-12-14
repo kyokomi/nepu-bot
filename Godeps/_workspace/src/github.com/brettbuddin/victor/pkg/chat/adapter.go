@@ -2,6 +2,7 @@ package chat
 
 import (
 	"fmt"
+
 	"github.com/brettbuddin/victor/pkg/store"
 	"github.com/gorilla/mux"
 )

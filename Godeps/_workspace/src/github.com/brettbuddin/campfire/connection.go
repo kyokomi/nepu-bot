@@ -2,8 +2,9 @@ package campfire
 
 import (
 	"encoding/json"
-	"github.com/brettbuddin/httpie"
 	"net/url"
+
+	"github.com/brettbuddin/httpie"
 )
 
 func NewConnection(subdomain, token string) *Connection {

@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/brettbuddin/victor"
 	"os"
 	"os/signal"
+
+	"github.com/brettbuddin/victor"
 )
 
 func main() {
