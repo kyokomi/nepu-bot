@@ -1,12 +1,12 @@
 package docomo
 
 import (
-	"net/http"
-	"os"
-	"io"
-	"mime/multipart"
 	"bytes"
 	"fmt"
+	"io"
+	"mime/multipart"
+	"net/http"
+	"os"
 )
 
 const DOMAIN_URL = "https://api.apigw.smt.docomo.ne.jp"
@@ -35,7 +35,7 @@ func New() *DocomoClient {
 }
 
 func (d *DocomoClient) PostJSON(docomoURL string, body io.Reader) (resp *http.Response, err error) {
-	return d.client.Post(d.domain + docomoURL + "?APIKEY=" + d.apiKey, "application/json", body)
+	return d.client.Post(d.domain+docomoURL+"?APIKEY="+d.apiKey, "application/json", body)
 }
 
 func (d *DocomoClient) PostImage(file string) (resp *http.Response, err error) {
@@ -67,7 +67,7 @@ func (d *DocomoClient) PostImage(file string) (resp *http.Response, err error) {
 	w.Close()
 
 	// Now that you have a form, you can submit it to your handler.
-	req, err := http.NewRequest("POST", d.domain + IMAGE_URL + "?APIKEY=" + d.apiKey, &b)
+	req, err := http.NewRequest("POST", d.domain+IMAGE_URL+"?APIKEY="+d.apiKey, &b)
 	if err != nil {
 		return
 	}

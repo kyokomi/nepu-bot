@@ -1,10 +1,10 @@
 package docomo
 
 import (
+	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
-	"io/ioutil"
-	"fmt"
 )
 
 var logger = log.New(os.Stderr, "image", log.Llongfile)

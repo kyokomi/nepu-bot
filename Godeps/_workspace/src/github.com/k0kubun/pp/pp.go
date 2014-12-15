@@ -3,9 +3,10 @@ package pp
 import (
 	"errors"
 	"fmt"
-	"github.com/mattn/go-colorable"
 	"io"
 	"os"
+
+	"github.com/mattn/go-colorable"
 )
 
 var out io.Writer

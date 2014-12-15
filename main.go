@@ -8,15 +8,24 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/brettbuddin/victor"
-	docomo "github.com/kyokomi/go-docomo"
 	"github.com/k0kubun/pp"
-	"strings"
+	docomo "github.com/kyokomi/go-docomo"
+	"github.com/kyokomi/nepu-bot/victor"
+	"flag"
 )
 
 var logger = log.New(os.Stderr, "nepu-bot", log.Llongfile)
 
 func main() {
+
+	var apiKey string
+	flag.StringVar(&apiKey, "APIKEY", "", "docomo developerで登録したAPIKEYをして下さい")
+	flag.Parse()
+
+	if apiKey == "" {
+		log.Fatalln("APIKEYを指定して下さい")
+	}
+
 	bot := victor.New(victor.Config{
 		Name:         "いーすん",
 		ChatAdapter:  "slack",
@@ -24,20 +33,13 @@ func main() {
 		HTTPAddr:     ":8000",
 	})
 
-	d := docomo.New()
+	d := docomo.New(apiKey)
 
-	bot.HandleCommandFunc("hello|hi|howdy", func(s victor.State) {
+	bot.HandleCommandFunc("hello|hi|howdy", (victor.HandlerFunc)(func(s victor.State) {
 		s.Chat().Send(s.Message().ChannelID(), fmt.Sprintf("Hello, %s", s.Message().UserName()))
-	})
-	bot.HandleCommandFunc("image .*", func(s victor.State) {
-		pp.Println(s.Message())
+	}))
 
-
-		// image 以降を取得する
-		d.SendImage(strings.TrimRight(s.Message().Text(), "image "))
-
-	})
-	bot.HandleCommandFunc(".*", func(s victor.State) {
+	bot.HandleCommandFunc(".*", (victor.HandlerFunc)(func(s victor.State) {
 		pp.Println(s.Message())
 
 		res, err := d.SendZatsudan(s.Message().UserName(), s.Message().Text())
@@ -54,7 +56,7 @@ func main() {
 
 		// Send Slack
 		s.Chat().Send(s.Message().ChannelID(), resMap["utt"])
-	})
+	}))
 
 	go bot.Run()
 
