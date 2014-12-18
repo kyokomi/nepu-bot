@@ -11,14 +11,6 @@
 			"Rev": "4b8fbc56f3b2400a7c7ea3dba9b3539787c486b6"
 		},
 		{
-			"ImportPath": "github.com/k0kubun/palette",
-			"Rev": "44343f071db4cfa56d344643d03f157c1e3383c0"
-		},
-		{
-			"ImportPath": "github.com/k0kubun/pp",
-			"Rev": "47b9561a7c1380b16d5a565b14146fef01bf7a28"
-		},
-		{
 			"ImportPath": "github.com/kyokomi/go-docomo",
 			"Rev": "cab9c97d85f5a1fa6d5e61dcdd5879fe76798967"
 		}

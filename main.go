@@ -8,10 +8,10 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/k0kubun/pp"
+	"flag"
+
 	docomo "github.com/kyokomi/go-docomo"
 	"github.com/kyokomi/nepu-bot/victor"
-	"flag"
 )
 
 var logger = log.New(os.Stderr, "nepu-bot", log.Llongfile)
@@ -23,7 +23,8 @@ func main() {
 	flag.Parse()
 
 	if apiKey == "" {
-		log.Fatalln("APIKEYを指定して下さい")
+		//log.Fatalln("APIKEYを指定して下さい")
+		apiKey = os.Getenv("DOCOMO_APIKEY")
 	}
 
 	bot := victor.New(victor.Config{
@@ -40,8 +41,6 @@ func main() {
 	}))
 
 	bot.HandleCommandFunc(".*", (victor.HandlerFunc)(func(s victor.State) {
-		pp.Println(s.Message())
-
 		res, err := d.SendZatsudan(s.Message().UserName(), s.Message().Text())
 		if err != nil {
 			logger.Println(err)
