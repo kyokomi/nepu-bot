@@ -1,52 +1,64 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"encoding/json"
+	"fmt"
 	"log"
-
-	"flag"
+	"net/http"
+	"net/url"
+	"strings"
 
 	docomo "github.com/kyokomi/go-docomo"
-	"github.com/kyokomi/nepu-bot/victor"
+	"github.com/zenazn/goji"
 )
+
+type Config struct {
+	Name,
+	ChatAdapter,
+	StoreAdapter,
+	HTTPAddr string
+}
+
+type Message struct {
+	userID, userName, channelID, channelName, text string
+}
+
+type OutgoingMessage struct {
+	Channel  string `json:"channel"`
+	Username string `json:"username"`
+	Text     string `json:"text"`
+}
 
 var logger = log.New(os.Stderr, "nepu-bot", log.Llongfile)
 
 func main() {
 
-	logger.Println("start")
-
-	var apiKey string
-	flag.StringVar(&apiKey, "APIKEY", "", "docomo developerで登録したAPIKEYをして下さい")
-	flag.Parse()
-
-	if apiKey == "" {
-		//log.Fatalln("APIKEYを指定して下さい")
-		apiKey = os.Getenv("DOCOMO_APIKEY")
-	}
-
-	logger.Println("new bot")
-
-	bot := victor.New(victor.Config{
+	bot := Config{
 		Name:         "いーすん",
 		ChatAdapter:  "slack",
 		StoreAdapter: "memory",
 		HTTPAddr:     os.Getenv("PORT"),
-	})
+	}
+	team := os.Getenv("VICTOR_SLACK_TEAM")
+	token := os.Getenv("VICTOR_SLACK_TOKEN")
+	d := docomo.New(os.Getenv("DOCOMO_APIKEY"))
 
-	logger.Println("new docomo")
+	goji.Post("/hubot/slack-webhook", func(_ http.ResponseWriter, r *http.Request) {
+		m := Message{
+			userID:      r.PostFormValue("user_id"),
+			userName:    r.PostFormValue("user_name"),
+			channelID:   r.PostFormValue("channel_id"),
+			channelName: r.PostFormValue("channel_name"),
+			text:        r.PostFormValue("text"),
+		}
 
-	d := docomo.New(apiKey)
+		if !strings.Contains(m.text, bot.Name) {
+			return
+		}
 
-	bot.HandleCommandFunc("hello|hi|howdy", (victor.HandlerFunc)(func(s victor.State) {
-		s.Chat().Send(s.Message().ChannelID(), fmt.Sprintf("Hello, %s", s.Message().UserName()))
-	}))
-
-	bot.HandleCommandFunc(".*", (victor.HandlerFunc)(func(s victor.State) {
-		res, err := d.SendZatsudan(s.Message().UserName(), s.Message().Text())
+		res, err := d.SendZatsudan(m.userName, strings.Replace(m.text, bot.Name, "", 1))
 		if err != nil {
 			logger.Println(err)
 			return
@@ -58,13 +70,22 @@ func main() {
 			return
 		}
 
-		// Send Slack
-		s.Chat().Send(s.Message().ChannelID(), resMap["utt"])
-	}))
+		go Send(bot.Name, team, token, m.channelID, resMap["utt"])
+	})
+	goji.Serve()
+}
 
-	logger.Println("run start")
+func Send(botName, team, token, channelID, msg string) {
+	body, err := json.Marshal(&OutgoingMessage{
+		Channel:  channelID,
+		Username: botName,
+		Text:     msg,
+	})
 
-	bot.Run()
+	if err != nil {
+		log.Println("error sending to chat:", err)
+	}
 
-	logger.Println("running... ")
+	endpoint := fmt.Sprintf("https://%s.slack.com/services/hooks/hubot?token=%s", team, token)
+	http.PostForm(endpoint, url.Values{"payload": {string(body)}})
 }
