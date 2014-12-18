@@ -34,7 +34,7 @@ func main() {
 		Name:         "いーすん",
 		ChatAdapter:  "slack",
 		StoreAdapter: "memory",
-		HTTPAddr:     ":8080",
+		HTTPAddr:     os.Getenv("PORT"),
 	})
 
 	logger.Println("new docomo")
