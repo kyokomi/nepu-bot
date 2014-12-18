@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/signal"
 
 	"encoding/json"
 	"log"
@@ -31,7 +30,7 @@ func main() {
 		Name:         "いーすん",
 		ChatAdapter:  "slack",
 		StoreAdapter: "memory",
-		HTTPAddr:     ":8000",
+		HTTPAddr:     ":80",
 	})
 
 	d := docomo.New(apiKey)
@@ -57,11 +56,5 @@ func main() {
 		s.Chat().Send(s.Message().ChannelID(), resMap["utt"])
 	}))
 
-	go bot.Run()
-
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, os.Interrupt)
-	<-sigs
-
-	bot.Stop()
+	bot.Run()
 }
