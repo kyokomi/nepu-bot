@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	chat.Register("slack", (chat.InitFunc)(func(r chat.Robot) chat.Adapter {
+	chat.Register("slack", (func(r chat.Robot) chat.Adapter {
 		team := os.Getenv("VICTOR_SLACK_TEAM")
 		token := os.Getenv("VICTOR_SLACK_TOKEN")
 
