@@ -17,6 +17,8 @@ var logger = log.New(os.Stderr, "nepu-bot", log.Llongfile)
 
 func main() {
 
+	logger.Println("start")
+
 	var apiKey string
 	flag.StringVar(&apiKey, "APIKEY", "", "docomo developerで登録したAPIKEYをして下さい")
 	flag.Parse()
@@ -26,12 +28,16 @@ func main() {
 		apiKey = os.Getenv("DOCOMO_APIKEY")
 	}
 
+	logger.Println("new bot")
+
 	bot := victor.New(victor.Config{
 		Name:         "いーすん",
 		ChatAdapter:  "slack",
 		StoreAdapter: "memory",
-		HTTPAddr:     ":80",
+		HTTPAddr:     ":8080",
 	})
+
+	logger.Println("new docomo")
 
 	d := docomo.New(apiKey)
 
@@ -56,5 +62,9 @@ func main() {
 		s.Chat().Send(s.Message().ChannelID(), resMap["utt"])
 	}))
 
+	logger.Println("run start")
+
 	bot.Run()
+
+	logger.Println("running... ")
 }
