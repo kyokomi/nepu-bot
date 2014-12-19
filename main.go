@@ -12,7 +12,18 @@ import (
 
 	docomo "github.com/kyokomi/go-docomo"
 	"github.com/zenazn/goji"
+	"math/rand"
 )
+
+var Kaomoji = []string{
+	"(; ・∀・)",
+	"(~_~;)",
+	"(-_-;)",
+	"?(°_°>)",
+	"Σ(￣□￣;)",
+	"( ｀・ω・´)",
+	"m9( ﾟдﾟ)",
+}
 
 type Config struct {
 	Name,
@@ -34,6 +45,9 @@ type OutgoingMessage struct {
 var logger = log.New(os.Stderr, "nepu-bot", log.Llongfile)
 
 var sendURL = os.Getenv("SLACK_INCOMING_URL")
+
+var random = rand.New(rand.NewSource(1))
+
 
 func main() {
 
@@ -79,8 +93,11 @@ func main() {
 			return
 		}
 
-		// 結果を非同期でSlackへSendする
-		go Send(bot.Name, team, token, m.channelID, resMap["utt"])
+		// 顔文字をランダムで付与する
+		idx := random.Int31n((int32)(len(Kaomoji) - 1))
+		message := resMap["utt"] + Kaomoji[idx]
+		// 結果を非同期でSlackへ
+		go Send(bot.Name, team, token, m.channelID, message)
 	})
 	goji.Serve()
 }
