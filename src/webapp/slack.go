@@ -40,10 +40,10 @@ type OutgoingMessage struct {
 	Text     string `json:"text"`
 }
 
-func HubotSlackWebhook(c *web.C, _ http.ResponseWriter, r *http.Request) {
+func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 
-	bot := (c.Env["bot"]).(*config.BotConfig)
-	d := (c.Env["docomo"]).(*docomo.DocomoClient)
+	bot := c.Env["bot"].(*config.BotConfig)
+	d := c.Env["docomo"].(*docomo.DocomoClient)
 
 	m := Message{
 		userID:      r.PostFormValue("user_id"),
