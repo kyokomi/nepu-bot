@@ -95,7 +95,7 @@ func main() {
 
 		// 顔文字をランダムで付与する
 		idx := random.Int31n((int32)(len(Kaomoji) - 1))
-		message := resMap["utt"] + Kaomoji[idx]
+		message := url.QueryEscape(resMap["utt"] + Kaomoji[idx])
 		// 結果を非同期でSlackへ
 		go Send(bot.Name, team, token, m.channelID, message)
 	})
