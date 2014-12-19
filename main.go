@@ -33,6 +33,8 @@ type OutgoingMessage struct {
 
 var logger = log.New(os.Stderr, "nepu-bot", log.Llongfile)
 
+var sendURL = os.Getenv("SLACK_INCOMING_URL")
+
 func main() {
 
 	bot := Config{
@@ -86,6 +88,7 @@ func Send(botName, team, token, channelID, msg string) {
 		log.Println("error sending to chat:", err)
 	}
 
-	endpoint := fmt.Sprintf("https://%s.slack.com/services/hooks/hubot?token=%s", team, token)
+	//endpoint := fmt.Sprintf("https://%s.slack.com/services/hooks/hubot?token=%s", team, token)
+	endpoint := fmt.Sprintf("%s", sendURL)
 	http.PostForm(endpoint, url.Values{"payload": {string(body)}})
 }
