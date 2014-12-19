@@ -91,12 +91,14 @@ func Send(botName, team, token, channelID, msg string) {
 		Username: botName,
 		Text:     msg,
 	})
-
 	if err != nil {
-		log.Println("error sending to chat:", err)
+		logger.Println("error sending to json marshal:", err)
 	}
 
 	//endpoint := fmt.Sprintf("https://%s.slack.com/services/hooks/hubot?token=%s", team, token)
 	endpoint := fmt.Sprintf("%s", sendURL)
-	http.PostForm(endpoint, url.Values{"payload": {string(body)}})
+
+	if _, err := http.PostForm(endpoint, url.Values{"payload": {string(body)}}); err != nil {
+		logger.Println("error sending to chat:", err)
+	}
 }
