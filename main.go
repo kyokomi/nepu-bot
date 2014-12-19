@@ -60,7 +60,14 @@ func main() {
 			return
 		}
 
-		res, err := d.SendZatsudan(m.userName, strings.Replace(m.text, bot.Name, "", 1))
+		// 名前のみの場合は固定文言に置き換え
+		t := strings.Replace(m.text, bot.Name, "", 1)
+		if len(t) == 0 {
+			t = "hello"
+		}
+
+		// 雑談API呼び出し
+		res, err := d.SendZatsudan(m.userName, t)
 		if err != nil {
 			logger.Println(err)
 			return
@@ -72,6 +79,7 @@ func main() {
 			return
 		}
 
+		// 結果を非同期でSlackへSendする
 		go Send(bot.Name, team, token, m.channelID, resMap["utt"])
 	})
 	goji.Serve()
