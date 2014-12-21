@@ -4,7 +4,7 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/kyokomi/go-docomo",
-			"Rev": "f993e560c2e86719d7cf4b7cf92bac8f0e7b57fe"
+			"Rev": "535061cb8abe56e699276079f722fabfdfab1bd1"
 		},
 		{
 			"ImportPath": "github.com/zenazn/goji",

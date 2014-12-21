@@ -19,10 +19,18 @@ func main() {
 	}
 
 	d := docomo.New(apiKey)
-	res, err := d.SendZatsudan(nickName, message)
-	if err != nil {
+
+	if res, err := d.SendZatsudan(nickName, message); err != nil {
 		log.Fatalln(err)
+	} else {
+		log.Println(string(res))
 	}
 
-	log.Println(string(res))
+	if res, err := d.SendQA(&docomo.QARequest{
+		QAText: "プラネテューヌの女神は誰",
+	}); err != nil {
+		log.Fatalln(err)
+	} else {
+		log.Printf("%+v\n", res)
+	}
 }
