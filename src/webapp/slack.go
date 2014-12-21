@@ -63,22 +63,42 @@ func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 		t = "hello"
 	}
 
-	// 雑談API呼び出し
-	res, err := d.SendZatsudan(m.userName, t)
-	if err != nil {
-		logger.Println(err)
-		return
-	}
+	var resMessage string
+	if !containsArray(m.text, []string{"おしえて", "教えて"}) {
+		// 知識Q&A
+		qa := docomo.QARequest{}
+		qa.QAText = m.text
+		for _, word := range []string{"おしえて", "教えて"} {
+			qa.QAText = strings.Replace(qa.QAText, word, "", -1)
+		}
+		res, err := d.SendQA(&qa)
+		if err != nil {
+			logger.Println(err)
+			return
+		}
+		resMessage = res.Answers[0].AnswerText
 
-	var resMap map[string]string
-	if err := json.Unmarshal(res, &resMap); err != nil {
-		logger.Println("Unmarshal ", err)
-		return
+	} else {
+		// その他は全部雑談
+
+		// 雑談API呼び出し
+		res, err := d.SendZatsudan(m.userName, t)
+		if err != nil {
+			logger.Println(err)
+			return
+		}
+
+		var resMap map[string]string
+		if err := json.Unmarshal(res, &resMap); err != nil {
+			logger.Println("Unmarshal ", err)
+			return
+		}
+		resMessage = resMap["utt"]
 	}
 
 	// 顔文字をランダムで付与する
 	idx := random.Int31n((int32)(len(Kaomoji) - 1))
-	message := resMap["utt"] + Kaomoji[idx]
+	message := resMessage + Kaomoji[idx]
 	// 結果を非同期でSlackへ
 	go Send(bot.Name, m.channelID, message)
 }
@@ -96,4 +116,15 @@ func Send(botName, channelID, msg string) {
 	if _, err := http.PostForm(sendURL, url.Values{"payload": {string(body)}}); err != nil {
 		logger.Println("error sending to chat:", err)
 	}
+}
+
+//
+
+func containsArray(s string, substrs []string) bool {
+	for _, substr := range substrs {
+		if strings.Index(s, substr) >= 0 {
+			return true
+		}
+	}
+	return false
 }
