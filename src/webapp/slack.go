@@ -64,7 +64,7 @@ func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 	}
 
 	var resMessage string
-	if !containsArray(m.text, []string{"おしえて", "教えて"}) {
+	if containsArray(m.text, []string{"おしえて", "教えて"}) {
 		// 知識Q&A
 		qa := docomo.QARequest{}
 		qa.QAText = m.text
