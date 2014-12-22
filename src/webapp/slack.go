@@ -1,16 +1,17 @@
 package webapp
 
 import (
+	"encoding/json"
 	"net/http"
 	"strings"
-	"encoding/json"
 
-	"github.com/zenazn/goji/web"
 	"log"
-	"os"
 	"math/rand"
 	"net/url"
+	"os"
+
 	docomo "github.com/kyokomi/go-docomo"
+	"github.com/zenazn/goji/web"
 )
 
 var logger = log.New(os.Stdout, "nepu-bot", log.Llongfile)
@@ -27,7 +28,7 @@ var Kaomoji = []string{
 }
 
 type SlackClient struct {
-	Name string
+	Name             string
 	SlackIncomingURL string
 }
 

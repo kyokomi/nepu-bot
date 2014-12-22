@@ -5,11 +5,12 @@ import (
 
 	"github.com/kyokomi/nepu-bot/src/webapp"
 
+	"flag"
+	"net/http"
+
 	docomo "github.com/kyokomi/go-docomo"
 	"github.com/zenazn/goji"
 	"github.com/zenazn/goji/web"
-	"net/http"
-	"flag"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 	flag.Parse()
 
 	slackClient := &webapp.SlackClient{
-		Name:         "いーすん",
+		Name:             "いーすん",
 		SlackIncomingURL: slackURL,
 	}
 
@@ -40,4 +41,3 @@ func main() {
 
 	goji.Serve()
 }
-
