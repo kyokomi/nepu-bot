@@ -10,12 +10,8 @@ import (
 	"os"
 	"math/rand"
 	"net/url"
-	"github.com/kyokomi/nepu-bot/src/config"
-
 	docomo "github.com/kyokomi/go-docomo"
 )
-
-var sendURL = os.Getenv("SLACK_INCOMING_URL")
 
 var logger = log.New(os.Stdout, "nepu-bot", log.Llongfile)
 var random = rand.New(rand.NewSource(1))
@@ -30,6 +26,11 @@ var Kaomoji = []string{
 	"m9( ﾟдﾟ)",
 }
 
+type SlackClient struct {
+	Name string
+	SlackIncomingURL string
+}
+
 type Message struct {
 	userID, userName, channelID, channelName, text string
 }
@@ -42,8 +43,8 @@ type OutgoingMessage struct {
 
 func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 
-	bot := c.Env["bot"].(*config.BotConfig)
-	d := c.Env["docomo"].(*docomo.DocomoClient)
+	slackClient := c.Env["slack"].(*SlackClient)
+	docomoClient := c.Env["docomo"].(*docomo.DocomoClient)
 
 	m := Message{
 		userID:      r.PostFormValue("user_id"),
@@ -53,12 +54,12 @@ func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 		text:        r.PostFormValue("text"),
 	}
 
-	if !strings.Contains(m.text, bot.Name) {
+	if !strings.Contains(m.text, slackClient.Name) {
 		return
 	}
 
 	// 名前のみの場合は固定文言に置き換え
-	t := strings.Replace(m.text, bot.Name, "", 1)
+	t := strings.Replace(m.text, slackClient.Name, "", 1)
 	if len(t) == 0 {
 		t = "hello"
 	}
@@ -71,7 +72,7 @@ func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 		for _, word := range []string{"おしえて", "教えて"} {
 			qa.QAText = strings.Replace(qa.QAText, word, "", -1)
 		}
-		res, err := d.SendQA(&qa)
+		res, err := docomoClient.SendQA(&qa)
 		if err != nil {
 			logger.Println(err)
 			return
@@ -82,7 +83,7 @@ func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 		// その他は全部雑談
 
 		// 雑談API呼び出し
-		res, err := d.SendZatsudan(m.userName, t)
+		res, err := docomoClient.SendZatsudan(m.userName, t)
 		if err != nil {
 			logger.Println(err)
 			return
@@ -100,20 +101,20 @@ func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 	idx := random.Int31n((int32)(len(Kaomoji) - 1))
 	message := resMessage + " " + Kaomoji[idx]
 	// 結果を非同期でSlackへ
-	go Send(bot.Name, m.channelID, message)
+	go slackClient.Send(m.channelID, message)
 }
 
-func Send(botName, channelID, msg string) {
+func (s SlackClient) Send(channelID, msg string) {
 	body, err := json.Marshal(&OutgoingMessage{
 		Channel:  channelID,
-		Username: botName,
+		Username: s.Name,
 		Text:     msg,
 	})
 	if err != nil {
 		logger.Println("error sending to json marshal:", err)
 	}
 
-	if _, err := http.PostForm(sendURL, url.Values{"payload": {string(body)}}); err != nil {
+	if _, err := http.PostForm(s.SlackIncomingURL, url.Values{"payload": {string(body)}}); err != nil {
 		logger.Println("error sending to chat:", err)
 	}
 }

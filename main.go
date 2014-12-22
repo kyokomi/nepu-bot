@@ -7,24 +7,29 @@ import (
 
 	docomo "github.com/kyokomi/go-docomo"
 	"github.com/zenazn/goji"
-	"github.com/kyokomi/nepu-bot/src/config"
 	"github.com/zenazn/goji/web"
 	"net/http"
+	"flag"
 )
 
 func main() {
 
-	botConfig := &config.BotConfig{
+	var apikey string
+	flag.StringVar(&apikey, "d", os.Getenv("DOCOMO_APIKEY"), "ドコモのAPIKEY")
+	var slackURL string
+	flag.StringVar(&slackURL, "s", os.Getenv("SLACK_INCOMING_URL"), "SlackのIncomingのURL")
+	flag.Parse()
+
+	slackClient := &webapp.SlackClient{
 		Name:         "いーすん",
-		ChatAdapter:  "slack",
-		StoreAdapter: "memory",
-		HTTPAddr:     os.Getenv("PORT"),
+		SlackIncomingURL: slackURL,
 	}
-	docomoClient := docomo.New(os.Getenv("DOCOMO_APIKEY"))
+
+	docomoClient := docomo.New(apikey)
 
 	goji.Use(func(c *web.C, h http.Handler) http.Handler {
 		fn := func(w http.ResponseWriter, r *http.Request) {
-			c.Env["bot"] = botConfig
+			c.Env["slack"] = slackClient
 			c.Env["docomo"] = docomoClient
 			h.ServeHTTP(w, r)
 		}
@@ -32,6 +37,7 @@ func main() {
 	})
 
 	goji.Post("/hubot/slack-webhook", webapp.HubotSlackWebhook)
+
 	goji.Serve()
 }
 
