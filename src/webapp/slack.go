@@ -98,7 +98,7 @@ func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 
 	// 顔文字をランダムで付与する
 	idx := random.Int31n((int32)(len(Kaomoji) - 1))
-	message := resMessage + Kaomoji[idx]
+	message := resMessage + " " + Kaomoji[idx]
 	// 結果を非同期でSlackへ
 	go Send(bot.Name, m.channelID, message)
 }
