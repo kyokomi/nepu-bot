@@ -76,8 +76,8 @@ func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 		// その他は全部雑談
 
 		// 雑談API呼び出し
-		dq := DialogueRequest{}
-		dq.Nickname = m.userName
+		dq := docomo.DialogueRequest{}
+		dq.Nickname = &m.userName
 		res, err := docomoClient.SendZatsudan(dq, true)
 		if err != nil {
 			logger.Println(err)
