@@ -1,16 +1,17 @@
 package docomo
 
 import (
-	"net/http"
 	"io"
+	"net/http"
 	"net/url"
-	"fmt"
 )
 
 const (
-	DOMAIN_URL = "https://api.apigw.smt.docomo.ne.jp"
+	// DomainURL DocomoAPIのhost
+	DomainURL = "https://api.apigw.smt.docomo.ne.jp"
 )
 
+// DocomoClient DocomoAPIへのpostやgetを行うクライアント
 type DocomoClient struct {
 	client  *http.Client
 	domain  string
@@ -18,14 +19,15 @@ type DocomoClient struct {
 	context string
 }
 
+// New DocomoClientを生成する
 func New(apiKey string) *DocomoClient {
+	c := DocomoClient{}
+	c.client = http.DefaultClient
+	c.domain = DomainURL
+	c.apiKey = apiKey
+	c.context = ""
 
-	return &DocomoClient{
-		client:  http.DefaultClient,
-		domain:  DOMAIN_URL,
-		apiKey:  apiKey,
-		context: "",
-	}
+	return &c
 }
 
 func (d *DocomoClient) createURL(docomoURL string) string {
@@ -42,6 +44,5 @@ func (d *DocomoClient) get(docomoURL string, query url.Values) (resp *http.Respo
 	for key, value := range query {
 		u += "&" + key + "=" + url.QueryEscape(value[0])
 	}
-	fmt.Println(u)
 	return d.client.Get(u)
 }

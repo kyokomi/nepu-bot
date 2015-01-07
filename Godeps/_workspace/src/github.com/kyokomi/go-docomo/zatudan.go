@@ -1,17 +1,19 @@
 package docomo
 
 import (
+	"bytes"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io/ioutil"
 	"net/http"
-	"bytes"
 )
 
 const (
-	DIALOGUE_URL = "/dialogue/v1/dialogue"
+	// DialogueURL docomoAPIの雑談APIのmethod
+	DialogueURL = "/dialogue/v1/dialogue"
 )
 
+// DialogueRequest 雑談APIのリクエスト
 // Mode dialog or srtr
 // CharactorID なし:デフォルト 20:関西弁 30:あかちゃん
 type DialogueRequest struct {
@@ -31,23 +33,38 @@ type DialogueRequest struct {
 	CharactorID    *int    `json:"t"`
 }
 
-func (d *DocomoClient) SendZatsudan(nickname, message string) ([]byte, error) {
-	return d.sendZatsudan(DialogueRequest{
-		Utt:     &message,
-		Context: &d.context,
-		Nickname: &nickname,
-	})
+// ZatsudanResponse 雑談APIのレスポンス
+type ZatsudanResponse struct {
+	Context string `json:"context"`
+	Da      string `json:"da"`
+	Mode    string `json:"mode"`
+	Utt     string `json:"utt"`
+	Yomi    string `json:"yomi"`
+	// error時
+	RequestError struct {
+		PolicyException struct {
+			MessageID string `json:"messageId"`
+			Text      string `json:"text"`
+		} `json:"policyException"`
+	} `json:"requestError"`
 }
 
-func (d *DocomoClient) sendZatsudan(b DialogueRequest) ([]byte, error) {
+// SendZatsudan 雑談APIに送信
+// refreshContextがtrueの場合、DocomoClientのContextを更新する
+func (d *DocomoClient) SendZatsudan(req DialogueRequest, refreshContext bool) (*ZatsudanResponse, error) {
+
+	// context有効の場合、clientで保持しているcontextを設定する
+	if refreshContext && req.Context != nil {
+		d.context = *req.Context
+	}
 
 	var data []byte
 	var err error
-	if data, err = json.Marshal(b); err != nil {
+	if data, err = json.Marshal(req); err != nil {
 		return nil, err
 	}
 
-	res, err := d.post(DIALOGUE_URL, "application/json", bytes.NewReader(data))
+	res, err := d.post(DialogueURL, "application/json", bytes.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
@@ -57,15 +74,18 @@ func (d *DocomoClient) sendZatsudan(b DialogueRequest) ([]byte, error) {
 		return nil, err
 	}
 
-	if res.StatusCode == http.StatusOK {
-		var resMap map[string]string
-		if err := json.Unmarshal(resData, &resMap); err != nil {
-			return nil, err
-		}
-		d.context = resMap["context"]
-	} else {
-		fmt.Println(string(resData))
+	var zatsudanRes ZatsudanResponse
+	if err := json.Unmarshal(resData, &zatsudanRes); err != nil {
+		return nil, err
 	}
 
-	return resData, nil
+	if res.StatusCode == http.StatusOK {
+		if refreshContext {
+			d.context = zatsudanRes.Context
+		}
+	} else {
+		return nil, errors.New("zatsudan error response: " + zatsudanRes.RequestError.PolicyException.Text)
+	}
+
+	return &zatsudanRes, nil
 }
