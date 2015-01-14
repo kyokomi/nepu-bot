@@ -3,8 +3,8 @@
 	"GoVersion": "go1.4",
 	"Deps": [
 		{
-			"ImportPath": "github.com/kyokomi/go-docomo",
-			"Rev": "56d227e64341b0216ef37bc3c94b3684ed456ce5"
+			"ImportPath": "github.com/kyokomi/go-docomo/docomo",
+			"Rev": "b296b8bb95a9a3186184d57af2947a43e32ccf04"
 		},
 		{
 			"ImportPath": "github.com/zenazn/goji",

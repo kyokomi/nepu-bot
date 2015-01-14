@@ -3,15 +3,17 @@ package docomo
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
-	"io/ioutil"
-	"net/http"
 )
 
 const (
 	// DialogueURL docomoAPIの雑談APIのmethod
 	DialogueURL = "/dialogue/v1/dialogue"
 )
+
+// DialogueService API docs: https://dev.smt.docomo.ne.jp/?p=docs.api.page&api_docs_id=5
+type DialogueService struct {
+	client *Client
+}
 
 // DialogueRequest 雑談APIのリクエスト
 // Mode dialog or srtr
@@ -33,8 +35,8 @@ type DialogueRequest struct {
 	CharactorID    *int    `json:"t"`
 }
 
-// ZatsudanResponse 雑談APIのレスポンス
-type ZatsudanResponse struct {
+// DialogueResponse 雑談APIのレスポンス
+type DialogueResponse struct {
 	Context string `json:"context"`
 	Da      string `json:"da"`
 	Mode    string `json:"mode"`
@@ -49,13 +51,13 @@ type ZatsudanResponse struct {
 	} `json:"requestError"`
 }
 
-// SendZatsudan 雑談APIに送信
+// Get 雑談APIを呼び出して結果を取得する.
 // refreshContextがtrueの場合、DocomoClientのContextを更新する
-func (d *DocomoClient) SendZatsudan(req DialogueRequest, refreshContext bool) (*ZatsudanResponse, error) {
+func (d *DialogueService) Get(req DialogueRequest, refreshContext bool) (*DialogueResponse, error) {
 
 	// context有効の場合、clientで保持しているcontextを設定する
 	if refreshContext && req.Context != nil {
-		d.context = *req.Context
+		d.SetContext(*req.Context)
 	}
 
 	var data []byte
@@ -64,28 +66,20 @@ func (d *DocomoClient) SendZatsudan(req DialogueRequest, refreshContext bool) (*
 		return nil, err
 	}
 
-	res, err := d.post(DialogueURL, "application/json", bytes.NewReader(data))
+	var dialogueRes DialogueResponse
+	_, err = d.client.post(DialogueURL, "application/json", bytes.NewReader(data), &dialogueRes)
 	if err != nil {
 		return nil, err
 	}
 
-	resData, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return nil, err
+	if refreshContext {
+		d.SetContext(dialogueRes.Context)
 	}
 
-	var zatsudanRes ZatsudanResponse
-	if err := json.Unmarshal(resData, &zatsudanRes); err != nil {
-		return nil, err
-	}
+	return &dialogueRes, nil
+}
 
-	if res.StatusCode == http.StatusOK {
-		if refreshContext {
-			d.context = zatsudanRes.Context
-		}
-	} else {
-		return nil, errors.New("zatsudan error response: " + zatsudanRes.RequestError.PolicyException.Text)
-	}
-
-	return &zatsudanRes, nil
+// SetContext setter DocomoClient context.
+func (d *DialogueService) SetContext(context string) {
+	d.client.context = context
 }
