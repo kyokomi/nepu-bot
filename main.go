@@ -8,7 +8,7 @@ import (
 	"flag"
 	"net/http"
 
-	docomo "github.com/kyokomi/go-docomo"
+	"github.com/kyokomi/go-docomo/docomo"
 	"github.com/zenazn/goji"
 	"github.com/zenazn/goji/web"
 )
@@ -26,7 +26,7 @@ func main() {
 		SlackIncomingURL: slackURL,
 	}
 
-	docomoClient := docomo.New(apikey)
+	docomoClient := docomo.NewClient(apikey)
 
 	goji.Use(func(c *web.C, h http.Handler) http.Handler {
 		fn := func(w http.ResponseWriter, r *http.Request) {

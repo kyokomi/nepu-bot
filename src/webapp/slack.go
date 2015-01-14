@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"os"
 
-	docomo "github.com/kyokomi/go-docomo"
+	"github.com/kyokomi/go-docomo/docomo"
 	"github.com/zenazn/goji/web"
 )
 
@@ -50,7 +50,7 @@ type OutgoingMessage struct {
 func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 
 	slackClient := c.Env["slack"].(*SlackClient)
-	docomoClient := c.Env["docomo"].(*docomo.DocomoClient)
+	docomoClient := c.Env["docomo"].(*docomo.Client)
 
 	m := Message{
 		userID:      r.PostFormValue("user_id"),
@@ -78,7 +78,7 @@ func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 		// 雑談API呼び出し
 		dq := docomo.DialogueRequest{}
 		dq.Nickname = &m.userName
-		res, err := docomoClient.SendZatsudan(dq, true)
+		res, err := docomoClient.Dialogue.Get(dq, true)
 		if err != nil {
 			logger.Println(err)
 			return
@@ -87,12 +87,12 @@ func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 
 	case containsArray(m.text, []string{"おしえて", "教えて"}):
 		// 知識Q&A
-		qa := docomo.QARequest{}
+		qa := docomo.KnowledgeQARequest{}
 		qa.QAText = m.text
 		for _, word := range []string{"おしえて", "教えて"} {
 			qa.QAText = strings.Replace(qa.QAText, word, "", -1)
 		}
-		res, err := docomoClient.SendQA(qa)
+		res, err := docomoClient.KnowledgeQA.Get(qa)
 		if err != nil {
 			logger.Println(err)
 			return
