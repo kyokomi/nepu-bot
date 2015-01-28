@@ -59,18 +59,14 @@ func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 		channelName: r.PostFormValue("channel_name"),
 		text:        r.PostFormValue("text"),
 	}
-
-	if !strings.Contains(m.text, slackClient.Name) {
-		return
-	}
+	var resMessage string
 
 	// 名前のみの場合は固定文言に置き換え
-	t := strings.Replace(m.text, slackClient.Name, "", 1)
-	if len(t) == 0 {
-		t = "hello"
+	text := strings.Replace(m.text, slackClient.Name, "", 1)
+	if len(text) == 0 {
+		text = "hello"
 	}
 
-	var resMessage string
 	switch {
 	default:
 		// その他は全部雑談
@@ -78,17 +74,19 @@ func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 		// 雑談API呼び出し
 		dq := docomo.DialogueRequest{}
 		dq.Nickname = &m.userName
+		dq.Utt = &text
 		res, err := docomoClient.Dialogue.Get(dq, true)
 		if err != nil {
 			logger.Println(err)
 			return
 		}
+
 		resMessage = res.Utt
 
-	case containsArray(m.text, []string{"おしえて", "教えて"}):
+	case containsArray(text, "おしえて", "教えて"):
 		// 知識Q&A
 		qa := docomo.KnowledgeQARequest{}
-		qa.QAText = m.text
+		qa.QAText = text
 		for _, word := range []string{"おしえて", "教えて"} {
 			qa.QAText = strings.Replace(qa.QAText, word, "", -1)
 		}
@@ -113,11 +111,12 @@ func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 }
 
 func (s SlackClient) send(channelID, msg string) {
-	body, err := json.Marshal(&OutgoingMessage{
+	ms := &OutgoingMessage{
 		Channel:  channelID,
 		Username: s.Name,
 		Text:     msg,
-	})
+	}
+	body, err := json.Marshal(ms)
 	if err != nil {
 		logger.Println("error sending to json marshal:", err)
 	}
@@ -127,9 +126,9 @@ func (s SlackClient) send(channelID, msg string) {
 	}
 }
 
-func containsArray(s string, substrs []string) bool {
-	for _, substr := range substrs {
-		if strings.Index(s, substr) >= 0 {
+func containsArray(s string, substrs ...string) bool {
+	for i := 0; i < len(substrs); i++ {
+		if strings.Index(s, substrs[i]) >= 0 {
 			return true
 		}
 	}
