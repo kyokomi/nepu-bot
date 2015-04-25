@@ -21,6 +21,7 @@ import (
 	"github.com/zenazn/goji/graceful"
 	"github.com/zenazn/goji/web"
 	"golang.org/x/net/context"
+	"math/rand"
 )
 
 func main() {
@@ -122,6 +123,7 @@ func webSocket(ctx bot.BotContext) {
 		}
 	}
 }
+var rd = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 func MessageResponse(ctx bot.BotContext, msEvent *slack.MessageEvent) string {
 	user, _ := ctx.Value("user").(slack.UserDetails)
@@ -131,10 +133,19 @@ func MessageResponse(ctx bot.BotContext, msEvent *slack.MessageEvent) string {
 	}
 
 	messageText := msEvent.Text
+
 	// TODO: ここでキーワードでハンドリングとか
 	if strings.Index(messageText, user.Id) != -1 {
 		messageText = messageText[strings.Index(messageText, ":")+len(":"):]
 		pp.Println("bot message ", messageText)
+	} else if strings.Index(messageText, "いーすん") == -1 {
+		a := int(rd.Int() % 5)
+		fmt.Println("################## ", a)
+		if a != 1 {
+			return ""
+		}
+	} else {
+		fmt.Println("################## ", "else")
 	}
 
 	// TODO: メッセージ生成（以前のやつ
