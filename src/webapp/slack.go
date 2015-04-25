@@ -30,8 +30,9 @@ var Kaomoji = []string{
 
 // SlackClient is Slack IncomingURL Client.
 type SlackClient struct {
-	Name             string
-	SlackIncomingURL string
+	Name             string // TODO: 旧API
+	SlackIncomingURL string // TODO: 旧API
+	Token            string
 }
 
 // Message is Slack Receive Message.
