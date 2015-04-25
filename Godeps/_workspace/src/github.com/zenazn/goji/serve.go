@@ -6,6 +6,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/zenazn/goji/bind"
 	"github.com/zenazn/goji/graceful"
@@ -16,6 +17,7 @@ func init() {
 	if fl := log.Flags(); fl&log.Ltime != 0 {
 		log.SetFlags(fl | log.Lmicroseconds)
 	}
+	graceful.DoubleKickWindow(2 * time.Second)
 }
 
 // Serve starts Goji using reasonable defaults.
@@ -24,6 +26,7 @@ func Serve() {
 		flag.Parse()
 	}
 
+	DefaultMux.Compile()
 	// Install our handler at the root of the standard net/http default mux.
 	// This allows packages like expvar to continue working as expected.
 	http.Handle("/", DefaultMux)
@@ -33,6 +36,8 @@ func Serve() {
 
 	graceful.HandleSignals()
 	bind.Ready()
+	graceful.PreHook(func() { log.Printf("Goji received signal, gracefully stopping") })
+	graceful.PostHook(func() { log.Printf("Goji stopped") })
 
 	err := graceful.Serve(listener, http.DefaultServeMux)
 

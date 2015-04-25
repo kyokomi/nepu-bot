@@ -3,98 +3,60 @@ Package graceful implements graceful shutdown for HTTP servers by closing idle
 connections after receiving a signal. By default, this package listens for
 interrupts (i.e., SIGINT), but when it detects that it is running under Einhorn
 it will additionally listen for SIGUSR2 as well, giving your application
-automatic support for graceful upgrades.
-
-It's worth mentioning explicitly that this package is a hack to shim graceful
-shutdown behavior into the net/http package provided in Go 1.2. It was written
-by carefully reading the sequence of function calls net/http happened to use as
-of this writing and finding enough surface area with which to add appropriate
-behavior. There's a very good chance that this package will cease to work in
-future versions of Go, but with any luck the standard library will add support
-of its own by then (https://code.google.com/p/go/issues/detail?id=4674).
-
-If you're interested in figuring out how this package works, we suggest you read
-the documentation for WrapConn() and net.go.
+automatic support for graceful restarts/code upgrades.
 */
 package graceful
 
 import (
-	"crypto/tls"
 	"net"
-	"net/http"
+	"runtime"
+	"sync/atomic"
+
+	"github.com/zenazn/goji/graceful/listener"
 )
 
-/*
-You might notice that these methods look awfully similar to the methods of the
-same name from the go standard library--that's because they were stolen from
-there! If go were more like, say, Ruby, it'd actually be possible to shim just
-the Serve() method, since we can do everything we want from there. However, it's
-not possible to get the other methods which call Serve() (ListenAndServe(), say)
-to call your shimmed copy--they always call the original.
-
-Since I couldn't come up with a better idea, I just copy-and-pasted both
-ListenAndServe and ListenAndServeTLS here more-or-less verbatim. "Oh well!"
-*/
-
-// Type Server is exactly the same as an http.Server, but provides more graceful
-// implementations of its methods.
-type Server http.Server
-
-func (srv *Server) ListenAndServe() error {
-	addr := srv.Addr
-	if addr == "" {
-		addr = ":http"
+// WrapListener wraps an arbitrary net.Listener for use with graceful shutdowns.
+// In the background, it uses the listener sub-package to Wrap the listener in
+// Deadline mode. If another mode of operation is desired, you should call
+// listener.Wrap yourself: this function is smart enough to not double-wrap
+// listeners.
+func WrapListener(l net.Listener) net.Listener {
+	if lt, ok := l.(*listener.T); ok {
+		appendListener(lt)
+		return lt
 	}
-	l, e := net.Listen("tcp", addr)
-	if e != nil {
-		return e
-	}
-	return srv.Serve(l)
+
+	lt := listener.Wrap(l, listener.Deadline)
+	appendListener(lt)
+	return lt
 }
 
-func (srv *Server) ListenAndServeTLS(certFile, keyFile string) error {
-	addr := srv.Addr
-	if addr == "" {
-		addr = ":https"
-	}
-	config := &tls.Config{}
-	if srv.TLSConfig != nil {
-		*config = *srv.TLSConfig
-	}
-	if config.NextProtos == nil {
-		config.NextProtos = []string{"http/1.1"}
-	}
+func appendListener(l *listener.T) {
+	mu.Lock()
+	defer mu.Unlock()
 
-	var err error
-	config.Certificates = make([]tls.Certificate, 1)
-	config.Certificates[0], err = tls.LoadX509KeyPair(certFile, keyFile)
-	if err != nil {
+	listeners = append(listeners, l)
+}
+
+const errClosing = "use of closed network connection"
+
+// During graceful shutdown, calls to Accept will start returning errors. This
+// is inconvenient, since we know these sorts of errors are peaceful, so we
+// silently swallow them.
+func peacefulError(err error) error {
+	if atomic.LoadInt32(&closing) == 0 {
 		return err
 	}
-
-	conn, err := net.Listen("tcp", addr)
-	if err != nil {
-		return err
+	// Unfortunately Go doesn't really give us a better way to select errors
+	// than this, so *shrug*.
+	if oe, ok := err.(*net.OpError); ok {
+		errOp := "accept"
+		if runtime.GOOS == "windows" {
+			errOp = "AcceptEx"
+		}
+		if oe.Op == errOp && oe.Err.Error() == errClosing {
+			return nil
+		}
 	}
-
-	tlsListener := tls.NewListener(conn, config)
-	return srv.Serve(tlsListener)
-}
-
-// ListenAndServe behaves exactly like the net/http function of the same name.
-func ListenAndServe(addr string, handler http.Handler) error {
-	server := &Server{Addr: addr, Handler: handler}
-	return server.ListenAndServe()
-}
-
-// ListenAndServeTLS behaves exactly like the net/http function of the same name.
-func ListenAndServeTLS(addr, certfile, keyfile string, handler http.Handler) error {
-	server := &Server{Addr: addr, Handler: handler}
-	return server.ListenAndServeTLS(certfile, keyfile)
-}
-
-// Serve behaves exactly like the net/http function of the same name.
-func Serve(l net.Listener, handler http.Handler) error {
-	server := &Server{Handler: handler}
-	return server.Serve(l)
+	return err
 }

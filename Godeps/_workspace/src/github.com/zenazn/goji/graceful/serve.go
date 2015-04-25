@@ -6,19 +6,15 @@ import (
 	"net"
 	"net/http"
 	"time"
+
+	"github.com/zenazn/goji/graceful/listener"
 )
 
 // About 200 years, also known as "forever"
 const forever time.Duration = 200 * 365 * 24 * time.Hour
 
+// Serve behaves like the method on net/http.Server with the same name.
 func (srv *Server) Serve(l net.Listener) error {
-	go func() {
-		<-kill
-		l.Close()
-		idleSet.killall()
-	}()
-	l = WrapListener(l)
-
 	// Spawn a shadow http.Server to do the actual servering. We do this
 	// because we need to sketch on some of the parameters you passed in,
 	// and it's nice to keep our sketching to ourselves.
@@ -27,16 +23,11 @@ func (srv *Server) Serve(l net.Listener) error {
 	if shadow.ReadTimeout == 0 {
 		shadow.ReadTimeout = forever
 	}
-	shadow.Handler = Middleware(shadow.Handler)
+	shadow.Handler = middleware(shadow.Handler)
 
-	err := shadow.Serve(l)
+	wrap := listener.Wrap(l, listener.Deadline)
+	appendListener(wrap)
 
-	// We expect an error when we close the listener, so we indiscriminately
-	// swallow Serve errors when we're in a shutdown state.
-	select {
-	case <-kill:
-		return nil
-	default:
-		return err
-	}
+	err := shadow.Serve(wrap)
+	return peacefulError(err)
 }
