@@ -12,6 +12,7 @@ import (
 
 	"github.com/kyokomi/go-docomo/docomo"
 	"github.com/zenazn/goji/web"
+	"github.com/kyokomi/nepu-bot/bot"
 )
 
 var logger = log.New(os.Stdout, "nepu-bot", log.Llongfile)
@@ -28,16 +29,17 @@ var Kaomoji = []string{
 	"m9( ﾟдﾟ)",
 }
 
-// SlackClient is Slack IncomingURL Client.
-type SlackClient struct {
-	Name             string // TODO: 旧API
-	SlackIncomingURL string // TODO: 旧API
-	Token            string
-}
-
 // Message is Slack Receive Message.
 type Message struct {
 	userID, userName, channelID, channelName, text string
+}
+
+func NewMessage(userID, channelID, text string) Message {
+	var m Message
+	m.userID = userID
+	m.channelID = channelID
+	m.text = text
+	return m
 }
 
 // OutgoingMessage is Slack PostRequest Message.
@@ -49,9 +51,7 @@ type OutgoingMessage struct {
 
 // HubotSlackWebhook hubotとしてSlackのWebhockを待ち受けるHandleFunc
 func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
-
-	slackClient := c.Env["slack"].(*SlackClient)
-	docomoClient := c.Env["docomo"].(*docomo.Client)
+	ctx := c.Env["Context"].(bot.BotContext)
 
 	m := Message{
 		userID:      r.PostFormValue("user_id"),
@@ -60,41 +60,49 @@ func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 		channelName: r.PostFormValue("channel_name"),
 		text:        r.PostFormValue("text"),
 	}
+
+	resMessage := CreateResMessage(ctx, m)
+
+	// 結果を非同期でSlackへ
+	go send(ctx, m.channelID, resMessage)
+}
+
+func CreateResMessage(ctx bot.BotContext, m Message) string {
 	var resMessage string
 
 	// 名前のみの場合は固定文言に置き換え
-	text := strings.Replace(m.text, slackClient.Name, "", 1)
+	text := strings.Replace(m.text, ctx.Slack.Name, "", 1)
 	if len(text) == 0 {
 		text = "hello"
 	}
 
 	switch {
-	default:
+		default:
 		// その他は全部雑談
 
 		// 雑談API呼び出し
 		dq := docomo.DialogueRequest{}
 		dq.Nickname = &m.userName
 		dq.Utt = &text
-		res, err := docomoClient.Dialogue.Get(dq, true)
+		res, err := ctx.Docomo.Dialogue.Get(dq, true)
 		if err != nil {
 			logger.Println(err)
-			return
+			return m.text
 		}
 
 		resMessage = res.Utt
 
-	case containsArray(text, "おしえて", "教えて"):
+		case containsArray(text, "おしえて", "教えて"):
 		// 知識Q&A
 		qa := docomo.KnowledgeQARequest{}
 		qa.QAText = text
 		for _, word := range []string{"おしえて", "教えて"} {
 			qa.QAText = strings.Replace(qa.QAText, word, "", -1)
 		}
-		res, err := docomoClient.KnowledgeQA.Get(qa)
+		res, err := ctx.Docomo.KnowledgeQA.Get(qa)
 		if err != nil {
 			logger.Println(err)
-			return
+			return m.text
 		}
 
 		if res.Success() {
@@ -106,12 +114,12 @@ func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
 
 	// 顔文字をランダムで付与する
 	idx := random.Int31n((int32)(len(Kaomoji) - 1))
-	message := resMessage + " " + Kaomoji[idx]
-	// 結果を非同期でSlackへ
-	go slackClient.send(m.channelID, message)
+	return resMessage + " " + Kaomoji[idx]
 }
 
-func (s SlackClient) send(channelID, msg string) {
+func send(ctx bot.BotContext, channelID, msg string) {
+	s := ctx.Slack
+
 	ms := &OutgoingMessage{
 		Channel:  channelID,
 		Username: s.Name,
