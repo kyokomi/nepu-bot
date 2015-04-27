@@ -1,17 +1,13 @@
 package webapp
 
 import (
-	"encoding/json"
-	"net/http"
 	"strings"
 
 	"log"
 	"math/rand"
-	"net/url"
 	"os"
 
 	"github.com/kyokomi/go-docomo/docomo"
-	"github.com/zenazn/goji/web"
 	"github.com/kyokomi/nepu-bot/bot"
 )
 
@@ -49,24 +45,6 @@ type OutgoingMessage struct {
 	Text     string `json:"text"`
 }
 
-// HubotSlackWebhook hubotとしてSlackのWebhockを待ち受けるHandleFunc
-func HubotSlackWebhook(c web.C, _ http.ResponseWriter, r *http.Request) {
-	ctx := c.Env["Context"].(bot.BotContext)
-
-	m := Message{
-		userID:      r.PostFormValue("user_id"),
-		userName:    r.PostFormValue("user_name"),
-		channelID:   r.PostFormValue("channel_id"),
-		channelName: r.PostFormValue("channel_name"),
-		text:        r.PostFormValue("text"),
-	}
-
-	resMessage := CreateResMessage(ctx, m)
-
-	// 結果を非同期でSlackへ
-	go send(ctx, m.channelID, resMessage)
-}
-
 func CreateResMessage(ctx bot.BotContext, m Message) string {
 	var resMessage string
 
@@ -77,7 +55,7 @@ func CreateResMessage(ctx bot.BotContext, m Message) string {
 	}
 
 	switch {
-		default:
+	default:
 		// その他は全部雑談
 
 		// 雑談API呼び出し
@@ -92,7 +70,7 @@ func CreateResMessage(ctx bot.BotContext, m Message) string {
 
 		resMessage = res.Utt
 
-		case containsArray(text, "おしえて", "教えて"):
+	case containsArray(text, "おしえて", "教えて"):
 		// 知識Q&A
 		qa := docomo.KnowledgeQARequest{}
 		qa.QAText = text
@@ -115,24 +93,6 @@ func CreateResMessage(ctx bot.BotContext, m Message) string {
 	// 顔文字をランダムで付与する
 	idx := random.Int31n((int32)(len(Kaomoji) - 1))
 	return resMessage + " " + Kaomoji[idx]
-}
-
-func send(ctx bot.BotContext, channelID, msg string) {
-	s := ctx.Slack
-
-	ms := &OutgoingMessage{
-		Channel:  channelID,
-		Username: s.Name,
-		Text:     msg,
-	}
-	body, err := json.Marshal(ms)
-	if err != nil {
-		logger.Println("error sending to json marshal:", err)
-	}
-
-	if _, err := http.PostForm(s.SlackIncomingURL, url.Values{"payload": {string(body)}}); err != nil {
-		logger.Println("error sending to chat:", err)
-	}
 }
 
 func containsArray(s string, substrs ...string) bool {

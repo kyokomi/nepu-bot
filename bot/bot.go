@@ -1,8 +1,8 @@
 package bot
 
 import (
-	"golang.org/x/net/context"
 	"github.com/kyokomi/go-docomo/docomo"
+	"golang.org/x/net/context"
 )
 
 type BotContext struct {
@@ -13,7 +13,6 @@ type BotContext struct {
 
 // SlackClient is Slack IncomingURL Client.
 type SlackClient struct {
-	Name             string // TODO: 旧API
-	SlackIncomingURL string // TODO: 旧API
-	Token            string
+	Name  string
+	Token string
 }
