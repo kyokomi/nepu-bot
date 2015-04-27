@@ -3,6 +3,14 @@
 	"GoVersion": "go1.4.2",
 	"Deps": [
 		{
+			"ImportPath": "github.com/guregu/kami",
+			"Rev": "f808672b87d0fb889caeff31c9ffda61ae6f6f4a"
+		},
+		{
+			"ImportPath": "github.com/julienschmidt/httprouter",
+			"Rev": "8c199fb6259ffc1af525cc3ad52ee60ba8359669"
+		},
+		{
 			"ImportPath": "github.com/k0kubun/pp",
 			"Comment": "v2.0.1-4-ge687562",
 			"Rev": "e68756270c3e374306a1af6588d7dc1cdcba10ff"
@@ -20,7 +28,17 @@
 			"Rev": "d67e0b7d1797975196499f79bcc322c08b9f218b"
 		},
 		{
-			"ImportPath": "github.com/zenazn/goji",
+			"ImportPath": "github.com/zenazn/goji/bind",
+			"Comment": "v0.9.0-15-g0276f3f",
+			"Rev": "0276f3f3fb609aabf8d9ba7aea10c80ec979989d"
+		},
+		{
+			"ImportPath": "github.com/zenazn/goji/graceful",
+			"Comment": "v0.9.0-15-g0276f3f",
+			"Rev": "0276f3f3fb609aabf8d9ba7aea10c80ec979989d"
+		},
+		{
+			"ImportPath": "github.com/zenazn/goji/web/mutil",
 			"Comment": "v0.9.0-15-g0276f3f",
 			"Rev": "0276f3f3fb609aabf8d9ba7aea10c80ec979989d"
 		},
