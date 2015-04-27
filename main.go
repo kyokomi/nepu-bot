@@ -69,33 +69,36 @@ func webSocket(ctx bot.BotContext) {
 		}
 	}(wsAPI, chSender)
 
-	//	for {
-	select {
-	case msg := <-chReceiver:
-		fmt.Print("Event Received: ")
-		switch msg.Data.(type) {
-		case slack.HelloEvent:
-		// TODO: デフォルトChannelに何か投げたい
-		case *slack.MessageEvent:
-			a := msg.Data.(*slack.MessageEvent)
-			message := MessageResponse(ctx, a)
-			if !a.IsStarred && message != "" {
-				chSender <- *wsAPI.NewOutgoingMessage(message, a.ChannelId)
+	go func() {
+		for {
+			select {
+			case msg := <-chReceiver:
+				fmt.Print("Event Received: ")
+				switch msg.Data.(type) {
+				case slack.HelloEvent:
+				// TODO: デフォルトChannelに何か投げたい
+				case *slack.MessageEvent:
+					a := msg.Data.(*slack.MessageEvent)
+					message := MessageResponse(ctx, a)
+					if !a.IsStarred && message != "" {
+						chSender <- *wsAPI.NewOutgoingMessage(message, a.ChannelId)
+					}
+				case *slack.PresenceChangeEvent:
+					a := msg.Data.(*slack.PresenceChangeEvent)
+					fmt.Printf("Presence Change: %v\n", a)
+				case slack.LatencyReport:
+					a := msg.Data.(slack.LatencyReport)
+					fmt.Printf("Current latency: %v\n", a.Value)
+				case *slack.SlackWSError:
+					error := msg.Data.(*slack.SlackWSError)
+					fmt.Printf("Error: %d - %s\n", error.Code, error.Msg)
+				default:
+					fmt.Printf("Unexpected: %v\n", msg.Data)
+				}
 			}
-		case *slack.PresenceChangeEvent:
-			a := msg.Data.(*slack.PresenceChangeEvent)
-			fmt.Printf("Presence Change: %v\n", a)
-		case slack.LatencyReport:
-			a := msg.Data.(slack.LatencyReport)
-			fmt.Printf("Current latency: %v\n", a.Value)
-		case *slack.SlackWSError:
-			error := msg.Data.(*slack.SlackWSError)
-			fmt.Printf("Error: %d - %s\n", error.Code, error.Msg)
-		default:
-			fmt.Printf("Unexpected: %v\n", msg.Data)
 		}
-	}
-	//	}
+	}()
+
 	kami.Get("/", func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("OK"))
 	})
