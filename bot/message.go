@@ -1,29 +1,16 @@
-package webapp
+package bot
 
 import (
 	"strings"
 
 	"log"
-	"math/rand"
 	"os"
 
+	"github.com/k0kubun/pp"
 	"github.com/kyokomi/go-docomo/docomo"
-	"github.com/kyokomi/nepu-bot/bot"
 )
 
 var logger = log.New(os.Stdout, "nepu-bot", log.Llongfile)
-var random = rand.New(rand.NewSource(1))
-
-// Kaomoji 顔文字
-var Kaomoji = []string{
-	"(; ・∀・)",
-	"(~_~;)",
-	"(-_-;)",
-	"?(°_°>)",
-	"Σ(￣□￣;)",
-	"( ｀・ω・´)",
-	"m9( ﾟдﾟ)",
-}
 
 // Message is Slack Receive Message.
 type Message struct {
@@ -38,15 +25,10 @@ func NewMessage(userID, channelID, text string) Message {
 	return m
 }
 
-// OutgoingMessage is Slack PostRequest Message.
-type OutgoingMessage struct {
-	Channel  string `json:"channel"`
-	Username string `json:"username"`
-	Text     string `json:"text"`
-}
-
-func CreateResMessage(ctx bot.BotContext, m Message) string {
+func CreateResMessage(ctx BotContext, m Message) string {
 	var resMessage string
+
+	pp.Println(m)
 
 	// 名前のみの場合は固定文言に置き換え
 	text := strings.Replace(m.text, ctx.Slack.Name, "", 1)
@@ -67,6 +49,8 @@ func CreateResMessage(ctx bot.BotContext, m Message) string {
 			logger.Println(err)
 			return m.text
 		}
+
+		pp.Println(res)
 
 		resMessage = res.Utt
 
@@ -90,9 +74,9 @@ func CreateResMessage(ctx bot.BotContext, m Message) string {
 		}
 	}
 
-	// 顔文字をランダムで付与する
-	idx := random.Int31n((int32)(len(Kaomoji) - 1))
-	return resMessage + " " + Kaomoji[idx]
+	pp.Println(resMessage + " " + GetKaomji())
+
+	return resMessage + " " + GetKaomji()
 }
 
 func containsArray(s string, substrs ...string) bool {

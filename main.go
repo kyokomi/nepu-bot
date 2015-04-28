@@ -1,27 +1,21 @@
 package main
 
 import (
-	"os"
-
-	"github.com/kyokomi/nepu-bot/src/webapp"
-
 	"flag"
-
 	"fmt"
+	"net/http"
+	"os"
 	"time"
 
-	"strings"
-
-	"math/rand"
-
-	"net/http"
-
 	"github.com/guregu/kami"
-	"github.com/k0kubun/pp"
 	"github.com/kyokomi/go-docomo/docomo"
 	"github.com/kyokomi/nepu-bot/bot"
+	"github.com/kyokomi/nepu-bot/plugins"
 	"github.com/kyokomi/slack"
 	"golang.org/x/net/context"
+
+	// init insert plugins
+	_ "github.com/kyokomi/nepu-bot/plugins/randommessage"
 )
 
 func main() {
@@ -79,10 +73,11 @@ func webSocket(ctx bot.BotContext) {
 				// TODO: デフォルトChannelに何か投げたい
 				case *slack.MessageEvent:
 					a := msg.Data.(*slack.MessageEvent)
-					message := MessageResponse(ctx, a)
-					if !a.IsStarred && message != "" {
-						chSender <- *wsAPI.NewOutgoingMessage(message, a.ChannelId)
-					}
+					MessageResponse(ctx, a, func(message string) {
+						if message != "" {
+							chSender <- *wsAPI.NewOutgoingMessage(message, a.ChannelId)
+						}
+					})
 				case *slack.PresenceChangeEvent:
 					a := msg.Data.(*slack.PresenceChangeEvent)
 					fmt.Printf("Presence Change: %v\n", a)
@@ -108,32 +103,19 @@ func webSocket(ctx bot.BotContext) {
 	kami.Serve()
 }
 
-var rd = rand.New(rand.NewSource(time.Now().UnixNano()))
-
-func MessageResponse(ctx bot.BotContext, msEvent *slack.MessageEvent) string {
+func MessageResponse(ctx bot.BotContext, msEvent *slack.MessageEvent, sendMessageFunc func(message string)) {
 	user, _ := ctx.Value("user").(slack.UserDetails)
 	if user.Id == msEvent.UserId {
 		// 自分のやつはスルーする
-		return ""
+		return
 	}
 
 	messageText := msEvent.Text
 
-	// TODO: ここでキーワードでハンドリングとか
-	if strings.Index(messageText, user.Id) != -1 {
-		messageText = messageText[strings.Index(messageText, ":")+len(":"):]
-		pp.Println("bot message ", messageText)
-	} else if strings.Index(messageText, "いーすん") == -1 {
-		a := int(rd.Int() % 5)
-		fmt.Println("################## ", a)
-		if a != 1 {
-			return ""
+	// 条件のfuncとOK時のfunc
+	for _, plugin := range plugins.Plugins {
+		if ok, message := plugin.CheckMessage(ctx, messageText); ok {
+			plugin.DoAction(ctx, msEvent, message, sendMessageFunc)
 		}
-	} else {
-		fmt.Println("################## ", "else")
 	}
-
-	// TODO: メッセージ生成（以前のやつ
-	m := webapp.NewMessage(msEvent.UserId, msEvent.ChannelId, messageText)
-	return webapp.CreateResMessage(ctx, m)
 }
