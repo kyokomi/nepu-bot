@@ -1,0 +1,6 @@
+deployment:
+  staging:
+    branch: master
+    heroku:
+      appname: nepu-bot
+
