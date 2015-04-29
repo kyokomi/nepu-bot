@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kyokomi/nepu-bot/bot"
-	"github.com/kyokomi/nepu-bot/bot/plugins"
+	"github.com/kyokomi/slackbot"
+	"github.com/kyokomi/slackbot/plugins"
 	"github.com/nlopes/slack"
 	"golang.org/x/net/context"
 )
@@ -23,7 +23,7 @@ type NepuMessage struct {
 }
 
 func (r NepuMessage) CheckMessage(ctx context.Context, message string) (bool, string) {
-	api := bot.FromSlackClient(ctx)
+	api := slackbot.FromSlackClient(ctx)
 	botUser := api.GetInfo().User
 	botName := api.Name
 

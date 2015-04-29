@@ -6,12 +6,12 @@ import (
 	"os"
 
 	"github.com/guregu/kami"
-	"github.com/kyokomi/nepu-bot/bot"
+	"github.com/kyokomi/slackbot"
 	"golang.org/x/net/context"
-	"github.com/kyokomi/nepu-bot/bot/plugins"
+	"github.com/kyokomi/slackbot/plugins"
 
 	// init insert bot.plugins
-	_ "github.com/kyokomi/nepu-bot/bot/plugins/echo"
+//	_ "github.com/kyokomi/slackbot/plugins/echo"
 	"github.com/kyokomi/nepu-bot/plugins/nepubot"
 )
 
@@ -25,11 +25,11 @@ func main() {
 	ctx := plugins.Context()
 	ctx = nepubot.NewContext(ctx, apikey)
 
-	c := bot.DefaultConfig()
+	c := slackbot.DefaultConfig()
 	c.Name = "いーすん"
 	c.SlackToken = token
 
-	bot.WebSocketRTM(ctx, c)
+	slackbot.WebSocketRTM(ctx, c)
 
 	kami.Get("/", func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("OK"))
