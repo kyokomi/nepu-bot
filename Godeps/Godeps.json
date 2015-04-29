@@ -11,21 +11,12 @@
 			"Rev": "8c199fb6259ffc1af525cc3ad52ee60ba8359669"
 		},
 		{
-			"ImportPath": "github.com/k0kubun/pp",
-			"Comment": "v2.0.1-4-ge687562",
-			"Rev": "e68756270c3e374306a1af6588d7dc1cdcba10ff"
-		},
-		{
 			"ImportPath": "github.com/kyokomi/go-docomo/docomo",
-			"Rev": "6e0d81e7c3c78f4fe0501a2e3b67cd82af1cb91d"
+			"Rev": "099235be57ed6e860a7defe7075846884aea5743"
 		},
 		{
-			"ImportPath": "github.com/kyokomi/slack",
-			"Rev": "d3da68f4712d35aa30eea0ed8c3cec18e279cfff"
-		},
-		{
-			"ImportPath": "github.com/mattn/go-colorable",
-			"Rev": "d67e0b7d1797975196499f79bcc322c08b9f218b"
+			"ImportPath": "github.com/nlopes/slack",
+			"Rev": "0105bc5372e8db25c4bdb0f7d0a65376864133e2"
 		},
 		{
 			"ImportPath": "github.com/zenazn/goji/bind",
