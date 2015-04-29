@@ -4,19 +4,19 @@ import (
 	"fmt"
 	"time"
 
+	"log"
+
 	"github.com/kyokomi/nepu-bot/plugins"
 	"github.com/nlopes/slack"
 	"golang.org/x/net/context"
-	"log"
 )
 
 type BotConfig struct {
-	Name         string
-	SlackToken   string
-	Protocol     string
-	Origin       string
-	KeepAlive    time.Duration
-	DocomoAPIKey string
+	Name       string
+	SlackToken string
+	Protocol   string
+	Origin     string
+	KeepAlive  time.Duration
 }
 
 func DefaultConfig() BotConfig {

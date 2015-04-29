@@ -4,9 +4,12 @@ import (
 	"strings"
 
 	"github.com/kyokomi/go-docomo/docomo"
-	"github.com/kyokomi/nepu-bot/bot"
 	"golang.org/x/net/context"
 )
+
+func NewContext(ctx context.Context, apiKey string) context.Context {
+	return docomo.NewContext(ctx, apiKey)
+}
 
 // Message is Slack Receive Message.
 type Message struct {
@@ -22,7 +25,7 @@ func NewMessage(userID, channelID, text string) Message {
 }
 
 func DocomoAPIMessage(ctx context.Context, m Message) string {
-	d := bot.FromDocomoClient(ctx)
+	d := docomo.FromContext(ctx)
 
 	text := m.text
 	var resMessage string

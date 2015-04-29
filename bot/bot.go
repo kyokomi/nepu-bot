@@ -20,9 +20,8 @@ type SlackClient struct {
 type key string
 
 const (
-	slackClientKey  key = "SlackClient"
-	docomoClientKey key = "DocomoClient"
-	slackRTMKey     key = "SlackRTM"
+	slackClientKey key = "SlackClient"
+	slackRTMKey    key = "SlackRTM"
 )
 
 func NewSlackClient(ctx context.Context, name string, token string) context.Context {
@@ -35,14 +34,6 @@ func NewSlackClient(ctx context.Context, name string, token string) context.Cont
 
 func FromSlackClient(ctx context.Context) SlackClient {
 	return ctx.Value(slackClientKey).(SlackClient)
-}
-
-func NewDocomoClient(ctx context.Context, apiKey string) context.Context {
-	return context.WithValue(ctx, docomoClientKey, DocomoClient{docomo.NewClient(apiKey)})
-}
-
-func FromDocomoClient(ctx context.Context) DocomoClient {
-	return ctx.Value(docomoClientKey).(DocomoClient)
 }
 
 func NewSlackRTM(ctx context.Context, protocol, origin string) context.Context {

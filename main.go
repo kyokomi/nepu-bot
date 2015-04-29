@@ -2,15 +2,16 @@ package main
 
 import (
 	"flag"
-	"os"
 	"net/http"
+	"os"
 
 	"github.com/guregu/kami"
 	"github.com/kyokomi/nepu-bot/bot"
 	"golang.org/x/net/context"
+	"github.com/kyokomi/nepu-bot/plugins"
 
 	// init insert plugins
-	_ "github.com/kyokomi/nepu-bot/plugins/nepubot"
+	"github.com/kyokomi/nepu-bot/plugins/nepubot"
 )
 
 func main() {
@@ -20,12 +21,11 @@ func main() {
 	flag.StringVar(&token, "token", os.Getenv("SLACK_BOT_TOKEN"), "SlackのBotToken")
 	flag.Parse()
 
-	ctx := context.Background()
-	ctx = bot.NewDocomoClient(ctx, apikey)
+	ctx := plugins.Context()
+	ctx = nepubot.NewContext(ctx, apikey)
 
 	c := bot.DefaultConfig()
 	c.Name = "いーすん"
-	c.DocomoAPIKey = apikey
 	c.SlackToken = token
 
 	bot.WebSocketRTM(ctx, c)
