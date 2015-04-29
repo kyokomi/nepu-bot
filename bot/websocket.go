@@ -6,7 +6,6 @@ import (
 
 	"log"
 
-	"github.com/kyokomi/nepu-bot/plugins"
 	"github.com/nlopes/slack"
 	"golang.org/x/net/context"
 )
@@ -84,29 +83,4 @@ func WebSocketRTM(ctx context.Context, config BotConfig) {
 			}
 		}
 	}(chSender, chReceiver)
-}
-
-func messageResponse(ctx context.Context, msEvent *slack.MessageEvent, sendMessageFunc func(message string)) {
-	wsAPI := FromSlackRTM(ctx)
-
-	user := wsAPI.GetInfo().User
-	if user.Id == msEvent.UserId {
-		// 自分のやつはスルーする
-		return
-	}
-
-	messageText := msEvent.Text
-
-	// 1件もプラグインがなければechoする
-	if len(plugins.Plugins) == 0 {
-		sendMessageFunc(messageText)
-		return
-	}
-
-	// 条件のfuncとOK時のfunc
-	for _, plugin := range plugins.Plugins {
-		if ok, message := plugin.CheckMessage(ctx, messageText); ok {
-			plugin.DoAction(ctx, msEvent, message, sendMessageFunc)
-		}
-	}
 }

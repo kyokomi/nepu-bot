@@ -8,9 +8,10 @@ import (
 	"github.com/guregu/kami"
 	"github.com/kyokomi/nepu-bot/bot"
 	"golang.org/x/net/context"
-	"github.com/kyokomi/nepu-bot/plugins"
+	"github.com/kyokomi/nepu-bot/bot/plugins"
 
-	// init insert plugins
+	// init insert bot.plugins
+	_ "github.com/kyokomi/nepu-bot/bot/plugins/echo"
 	"github.com/kyokomi/nepu-bot/plugins/nepubot"
 )
 

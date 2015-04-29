@@ -1,21 +1,9 @@
 package bot
 
 import (
-	"github.com/kyokomi/go-docomo/docomo"
 	"github.com/nlopes/slack"
 	"golang.org/x/net/context"
 )
-
-type DocomoClient struct {
-	*docomo.Client
-}
-
-// SlackClient is Slack IncomingURL Client.
-type SlackClient struct {
-	*slack.Slack
-	Name  string
-	Token string
-}
 
 type key string
 
@@ -23,6 +11,12 @@ const (
 	slackClientKey key = "SlackClient"
 	slackRTMKey    key = "SlackRTM"
 )
+
+type SlackClient struct {
+	*slack.Slack
+	Name  string
+	Token string
+}
 
 func NewSlackClient(ctx context.Context, name string, token string) context.Context {
 	c := SlackClient{}

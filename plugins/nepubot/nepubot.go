@@ -6,21 +6,23 @@ import (
 	"time"
 
 	"github.com/kyokomi/nepu-bot/bot"
-	"github.com/kyokomi/nepu-bot/plugins"
+	"github.com/kyokomi/nepu-bot/bot/plugins"
 	"github.com/nlopes/slack"
 	"golang.org/x/net/context"
 )
 
+type pluginKey string
+
 func init() {
-	plugins.Plugins["randomMessage"] = RandomMessage{}
+	plugins.AddPlugin(pluginKey("nepubot"), NepuMessage{})
 }
 
 var rd = rand.New(rand.NewSource(time.Now().UnixNano()))
 
-type RandomMessage struct {
+type NepuMessage struct {
 }
 
-func (r RandomMessage) CheckMessage(ctx context.Context, message string) (bool, string) {
+func (r NepuMessage) CheckMessage(ctx context.Context, message string) (bool, string) {
 	api := bot.FromSlackClient(ctx)
 	botUser := api.GetInfo().User
 	botName := api.Name
@@ -45,9 +47,10 @@ func (r RandomMessage) CheckMessage(ctx context.Context, message string) (bool, 
 	return true, message
 }
 
-func (r RandomMessage) DoAction(ctx context.Context, msEvent *slack.MessageEvent, message string, sendMessageFunc func(message string)) {
+func (r NepuMessage) DoAction(ctx context.Context, msEvent *slack.MessageEvent, message string, sendMessageFunc func(message string)) bool {
 	m := NewMessage(msEvent.UserId, msEvent.ChannelId, message)
 	sendMessageFunc(DocomoAPIMessage(ctx, m))
+	return false // stop not next
 }
 
-var _ plugins.BotMessagePlugin = (*RandomMessage)(nil)
+var _ plugins.BotMessagePlugin = (*NepuMessage)(nil)
