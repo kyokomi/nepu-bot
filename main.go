@@ -7,11 +7,11 @@ import (
 
 	"github.com/guregu/kami"
 	"github.com/kyokomi/slackbot"
-	"golang.org/x/net/context"
 	"github.com/kyokomi/slackbot/plugins"
+	"golang.org/x/net/context"
 
 	// init insert bot.plugins
-//	_ "github.com/kyokomi/slackbot/plugins/echo"
+	//	_ "github.com/kyokomi/slackbot/plugins/echo"
 	"github.com/kyokomi/nepu-bot/plugins/nepubot"
 )
 

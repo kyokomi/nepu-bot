@@ -5,9 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kyokomi/slackbot"
 	"github.com/kyokomi/slackbot/plugins"
-	"github.com/nlopes/slack"
+	"github.com/kyokomi/slackbot/slackctx"
 	"golang.org/x/net/context"
 )
 
@@ -23,7 +22,7 @@ type NepuMessage struct {
 }
 
 func (r NepuMessage) CheckMessage(ctx context.Context, message string) (bool, string) {
-	api := slackbot.FromSlackClient(ctx)
+	api := slackctx.FromSlackClient(ctx)
 	botUser := api.GetInfo().User
 	botName := api.Name
 
@@ -47,7 +46,9 @@ func (r NepuMessage) CheckMessage(ctx context.Context, message string) (bool, st
 	return true, message
 }
 
-func (r NepuMessage) DoAction(ctx context.Context, msEvent *slack.MessageEvent, message string, sendMessageFunc func(message string)) bool {
+func (r NepuMessage) DoAction(ctx context.Context, message string, sendMessageFunc func(message string)) bool {
+	msEvent := slackctx.FromMessageEvent(ctx)
+
 	m := NewMessage(msEvent.UserId, msEvent.ChannelId, message)
 	sendMessageFunc(DocomoAPIMessage(ctx, m))
 	return false // stop not next
