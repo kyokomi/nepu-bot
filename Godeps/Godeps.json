@@ -12,7 +12,11 @@
 		},
 		{
 			"ImportPath": "github.com/kyokomi/go-docomo/docomo",
-			"Rev": "099235be57ed6e860a7defe7075846884aea5743"
+			"Rev": "4e7dfc66eb4f0fdda1fe8c6f1a3f1ccf26bee0b0"
+		},
+		{
+			"ImportPath": "github.com/kyokomi/slackbot",
+			"Rev": "3b776be4f5127dfd9b06035267cd3cef1cefab7f"
 		},
 		{
 			"ImportPath": "github.com/nlopes/slack",
