@@ -1,16 +1,12 @@
-package bot
+package nepubot
 
 import (
 	"strings"
 
-	"log"
-	"os"
-
-	"github.com/k0kubun/pp"
 	"github.com/kyokomi/go-docomo/docomo"
+	"github.com/kyokomi/nepu-bot/bot"
+	"golang.org/x/net/context"
 )
-
-var logger = log.New(os.Stdout, "nepu-bot", log.Llongfile)
 
 // Message is Slack Receive Message.
 type Message struct {
@@ -25,17 +21,11 @@ func NewMessage(userID, channelID, text string) Message {
 	return m
 }
 
-func CreateResMessage(ctx BotContext, m Message) string {
+func DocomoAPIMessage(ctx context.Context, m Message) string {
+	d := bot.FromDocomoClient(ctx)
+
+	text := m.text
 	var resMessage string
-
-	pp.Println(m)
-
-	// 名前のみの場合は固定文言に置き換え
-	text := strings.Replace(m.text, ctx.Slack.Name, "", 1)
-	if len(text) == 0 {
-		text = "hello"
-	}
-
 	switch {
 	default:
 		// その他は全部雑談
@@ -44,13 +34,10 @@ func CreateResMessage(ctx BotContext, m Message) string {
 		dq := docomo.DialogueRequest{}
 		dq.Nickname = &m.userName
 		dq.Utt = &text
-		res, err := ctx.Docomo.Dialogue.Get(dq, true)
+		res, err := d.Dialogue.Get(dq, true)
 		if err != nil {
-			logger.Println(err)
 			return m.text
 		}
-
-		pp.Println(res)
 
 		resMessage = res.Utt
 
@@ -61,9 +48,8 @@ func CreateResMessage(ctx BotContext, m Message) string {
 		for _, word := range []string{"おしえて", "教えて"} {
 			qa.QAText = strings.Replace(qa.QAText, word, "", -1)
 		}
-		res, err := ctx.Docomo.KnowledgeQA.Get(qa)
+		res, err := d.KnowledgeQA.Get(qa)
 		if err != nil {
-			logger.Println(err)
 			return m.text
 		}
 
@@ -73,8 +59,6 @@ func CreateResMessage(ctx BotContext, m Message) string {
 			resMessage = "はて?"
 		}
 	}
-
-	pp.Println(resMessage + " " + GetKaomji())
 
 	return resMessage + " " + GetKaomji()
 }

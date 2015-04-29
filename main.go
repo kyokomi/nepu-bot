@@ -2,20 +2,15 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"net/http"
 	"os"
-	"time"
+	"net/http"
 
 	"github.com/guregu/kami"
-	"github.com/kyokomi/go-docomo/docomo"
 	"github.com/kyokomi/nepu-bot/bot"
-	"github.com/kyokomi/nepu-bot/plugins"
-	"github.com/kyokomi/slack"
 	"golang.org/x/net/context"
 
 	// init insert plugins
-	_ "github.com/kyokomi/nepu-bot/plugins/randommessage"
+	_ "github.com/kyokomi/nepu-bot/plugins/nepubot"
 )
 
 func main() {
@@ -25,74 +20,15 @@ func main() {
 	flag.StringVar(&token, "token", os.Getenv("SLACK_BOT_TOKEN"), "SlackのBotToken")
 	flag.Parse()
 
-	ctx := bot.BotContext{}
-	ctx.Context = context.Background()
+	ctx := context.Background()
+	ctx = bot.NewDocomoClient(ctx, apikey)
 
-	slackClient := &bot.SlackClient{
-		Name:  "いーすん",
-		Token: token,
-	}
-	ctx.Slack = slackClient
+	c := bot.DefaultConfig()
+	c.Name = "いーすん"
+	c.DocomoAPIKey = apikey
+	c.SlackToken = token
 
-	docomoClient := docomo.NewClient(apikey)
-	ctx.Docomo = docomoClient
-
-	webSocket(ctx)
-}
-
-func webSocket(ctx bot.BotContext) {
-	chSender := make(chan slack.OutgoingMessage)
-	chReceiver := make(chan slack.SlackEvent)
-
-	api := slack.New(ctx.Slack.Token)
-	api.SetDebug(true)
-	wsAPI, err := api.StartRTM("", "http://example.com")
-	if err != nil {
-		fmt.Errorf("%s\n", err)
-	}
-
-	ctx.Context = context.WithValue(ctx.Context, "user", wsAPI.GetInfo().User)
-	go wsAPI.HandleIncomingEvents(chReceiver)
-	go wsAPI.Keepalive(20 * time.Second)
-	go func(wsAPI *slack.SlackWS, chSender chan slack.OutgoingMessage) {
-		for {
-			select {
-			case msg := <-chSender:
-				wsAPI.SendMessage(&msg)
-			}
-		}
-	}(wsAPI, chSender)
-
-	go func() {
-		for {
-			select {
-			case msg := <-chReceiver:
-				fmt.Print("Event Received: ")
-				switch msg.Data.(type) {
-				case slack.HelloEvent:
-				// TODO: デフォルトChannelに何か投げたい
-				case *slack.MessageEvent:
-					a := msg.Data.(*slack.MessageEvent)
-					MessageResponse(ctx, a, func(message string) {
-						if message != "" {
-							chSender <- *wsAPI.NewOutgoingMessage(message, a.ChannelId)
-						}
-					})
-				case *slack.PresenceChangeEvent:
-					a := msg.Data.(*slack.PresenceChangeEvent)
-					fmt.Printf("Presence Change: %v\n", a)
-				case slack.LatencyReport:
-					a := msg.Data.(slack.LatencyReport)
-					fmt.Printf("Current latency: %v\n", a.Value)
-				case *slack.SlackWSError:
-					error := msg.Data.(*slack.SlackWSError)
-					fmt.Printf("Error: %d - %s\n", error.Code, error.Msg)
-				default:
-					fmt.Printf("Unexpected: %v\n", msg.Data)
-				}
-			}
-		}
-	}()
+	bot.WebSocketRTM(ctx, c)
 
 	kami.Get("/", func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("OK"))
@@ -101,21 +37,4 @@ func webSocket(ctx bot.BotContext) {
 		w.Write([]byte("PONG"))
 	})
 	kami.Serve()
-}
-
-func MessageResponse(ctx bot.BotContext, msEvent *slack.MessageEvent, sendMessageFunc func(message string)) {
-	user, _ := ctx.Value("user").(slack.UserDetails)
-	if user.Id == msEvent.UserId {
-		// 自分のやつはスルーする
-		return
-	}
-
-	messageText := msEvent.Text
-
-	// 条件のfuncとOK時のfunc
-	for _, plugin := range plugins.Plugins {
-		if ok, message := plugin.CheckMessage(ctx, messageText); ok {
-			plugin.DoAction(ctx, msEvent, message, sendMessageFunc)
-		}
-	}
 }

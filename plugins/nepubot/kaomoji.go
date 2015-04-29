@@ -1,4 +1,4 @@
-package bot
+package nepubot
 
 import "math/rand"
 
