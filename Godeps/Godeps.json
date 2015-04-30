@@ -3,6 +3,15 @@
 	"GoVersion": "go1.4.2",
 	"Deps": [
 		{
+			"ImportPath": "github.com/PuerkitoBio/goquery",
+			"Comment": "v0.3.2-78-g60ec77b",
+			"Rev": "60ec77b0032de8548a0d67f76154458850264a99"
+		},
+		{
+			"ImportPath": "github.com/andybalholm/cascadia",
+			"Rev": "54abbbf07a45a3ef346ebe903e0715d9a3c19352"
+		},
+		{
 			"ImportPath": "github.com/guregu/kami",
 			"Rev": "f808672b87d0fb889caeff31c9ffda61ae6f6f4a"
 		},
@@ -16,7 +25,7 @@
 		},
 		{
 			"ImportPath": "github.com/kyokomi/slackbot",
-			"Rev": "3313a2f3da8d7780d809f76d018a37756230f78b"
+			"Rev": "49efbb528b092b856b80fc70f5d5ef0968984720"
 		},
 		{
 			"ImportPath": "github.com/nlopes/slack",
@@ -39,6 +48,10 @@
 		},
 		{
 			"ImportPath": "golang.org/x/net/context",
+			"Rev": "ff8eb9a34a5cbb9941ffc6f84a19a8014c2646ad"
+		},
+		{
+			"ImportPath": "golang.org/x/net/html",
 			"Rev": "ff8eb9a34a5cbb9941ffc6f84a19a8014c2646ad"
 		},
 		{
