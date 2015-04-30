@@ -13,6 +13,7 @@ import (
 	// init insert bot.plugins
 	//	_ "github.com/kyokomi/slackbot/plugins/echo"
 	"github.com/kyokomi/nepu-bot/plugins/nepubot"
+	_ "github.com/kyokomi/slackbot/plugins/tiqav"
 	_ "github.com/kyokomi/slackbot/plugins/lgtm"
 )
 
