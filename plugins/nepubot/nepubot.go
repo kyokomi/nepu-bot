@@ -46,11 +46,11 @@ func (r NepuMessage) CheckMessage(ctx context.Context, message string) (bool, st
 	return true, message
 }
 
-func (r NepuMessage) DoAction(ctx context.Context, message string, sendMessageFunc func(message string)) bool {
+func (r NepuMessage) DoAction(ctx context.Context, message string) bool {
 	msEvent := slackctx.FromMessageEvent(ctx)
 
 	m := NewMessage(msEvent.UserId, msEvent.ChannelId, message)
-	sendMessageFunc(DocomoAPIMessage(ctx, m))
+	plugins.SendMessage(ctx, DocomoAPIMessage(ctx, m))
 	return false // stop not next
 }
 
