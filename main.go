@@ -15,6 +15,7 @@ import (
 	"github.com/kyokomi/nepu-bot/plugins/nepubot"
 	_ "github.com/kyokomi/slackbot/plugins/tiqav"
 	_ "github.com/kyokomi/slackbot/plugins/lgtm"
+	_ "github.com/kyokomi/slackbot/plugins/suddendeath"
 )
 
 func main() {
