@@ -12,11 +12,14 @@ import (
 
 	// init insert bot.plugins
 	//	_ "github.com/kyokomi/slackbot/plugins/echo"
+
 	"github.com/kyokomi/nepu-bot/plugins/nepubot"
-	_ "github.com/kyokomi/slackbot/plugins/tiqav"
 	_ "github.com/kyokomi/slackbot/plugins/lgtm"
 	_ "github.com/kyokomi/slackbot/plugins/suddendeath"
+	_ "github.com/kyokomi/slackbot/plugins/tiqav"
 )
+
+//go:generate ego -package main
 
 func main() {
 	var apikey string
@@ -35,7 +38,7 @@ func main() {
 	slackbot.WebSocketRTM(ctx, c)
 
 	kami.Get("/", func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("OK"))
+		IndexTmpl(w, plugins.GetPlugins())
 	})
 	kami.Get("/ping", func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("PONG"))

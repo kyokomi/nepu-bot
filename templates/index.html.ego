@@ -1,0 +1,17 @@
+<%! func IndexTmpl(w io.Writer, pList []plugins.Plugin) error %>
+
+<%% import "github.com/kyokomi/slackbot/plugins" %%>
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>いーすん管理画面</title>
+</head>
+<body>
+    <h1>いーすん管理画面</h1>
+    <% for idx, p := range pList { %>
+    <li><%= idx %> : <%= p.Name() %></li>
+    <% } %>
+</body>
+</html>
