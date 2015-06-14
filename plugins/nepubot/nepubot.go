@@ -10,6 +10,10 @@ import (
 	"golang.org/x/net/context"
 )
 
+const (
+	randomMessageCount = 5 // その他は5回に1回だけ返信する
+)
+
 type pluginKey string
 
 func init() {
@@ -35,9 +39,9 @@ func (r NepuMessage) CheckMessage(ctx context.Context, message string) (bool, st
 		if len(text) == 0 {
 			text = "hello" // 名前だけの場合は固定で挨拶
 		}
+		message = text
 	} else {
-		// その他は5回に1回だけ返信する
-		a := int(rd.Int() % 5)
+		a := int(rd.Int() % randomMessageCount)
 		if a != 1 {
 			return false, ""
 		}
@@ -49,8 +53,18 @@ func (r NepuMessage) CheckMessage(ctx context.Context, message string) (bool, st
 func (r NepuMessage) DoAction(ctx context.Context, message string) bool {
 	msEvent := slackctx.FromMessageEvent(ctx)
 
+	if strings.Index(message, "静かに") != -1 {
+		plugins.Stop()
+		go func() {
+			// 5分黙ってもらう
+			time.Sleep(5 * time.Minute)
+			plugins.Start()
+		}()
+	}
+
 	m := NewMessage(msEvent.UserId, msEvent.ChannelId, message)
 	plugins.SendMessage(ctx, DocomoAPIMessage(ctx, m))
+
 	return false // stop not next
 }
 
