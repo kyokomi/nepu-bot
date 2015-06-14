@@ -18,7 +18,7 @@
 		},
 		{
 			"ImportPath": "github.com/guregu/kami",
-			"Rev": "f808672b87d0fb889caeff31c9ffda61ae6f6f4a"
+			"Rev": "812da62f883f094d3ed38dbdf4294341d357a2ab"
 		},
 		{
 			"ImportPath": "github.com/julienschmidt/httprouter",
@@ -30,7 +30,7 @@
 		},
 		{
 			"ImportPath": "github.com/kyokomi/slackbot",
-			"Rev": "d07f8194ab312062d419c3840f8ee9231b993fbd"
+			"Rev": "fc47573f12864afe0fcfb34b129c8882ea075db6"
 		},
 		{
 			"ImportPath": "github.com/nlopes/slack",
