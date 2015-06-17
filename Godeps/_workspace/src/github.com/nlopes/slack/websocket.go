@@ -167,9 +167,7 @@ func (api *SlackWS) HandleIncomingEvents(ch chan SlackEvent) {
 			log.Panic(err)
 		}
 		if len(event) == 0 {
-			if api.debug {
-				log.Println("Event Empty. WTF?")
-			}
+			log.Println("Event Empty. WTF?")
 		} else {
 			if api.debug {
 				log.Println(string(event[:]))

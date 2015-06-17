@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -13,7 +12,6 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"time"
 )
 
 func fileUploadReq(path, fpath string, values url.Values) (*http.Request, error) {
@@ -88,20 +86,11 @@ func parseResponseMultipart(path string, filepath string, values url.Values, int
 	return parseResponseBody(resp.Body, &intf, debug)
 }
 
-func postForm(endpoint string, values url.Values, intf interface{}, debug bool) error {
-	resp, err := http.PostForm(endpoint, values)
+func parseResponse(path string, values url.Values, intf interface{}, debug bool) error {
+	resp, err := http.PostForm(SLACK_API+path, values)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
 	return parseResponseBody(resp.Body, &intf, debug)
-}
-
-func parseResponse(path string, values url.Values, intf interface{}, debug bool) error {
-	return postForm(SLACK_API+path, values, intf, debug)
-}
-
-func parseAdminResponse(method string, teamName string, values url.Values, intf interface{}, debug bool) error {
-	endpoint := fmt.Sprintf(SLACK_WEB_API_FORMAT, teamName, method, time.Now().Unix())
-	return postForm(endpoint, values, intf, debug)
 }
