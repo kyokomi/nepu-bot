@@ -14,6 +14,7 @@ import (
 	//	_ "github.com/kyokomi/slackbot/plugins/echo"
 
 	"github.com/kyokomi/nepu-bot/plugins/nepubot"
+	"github.com/kyokomi/slackbot/plugins/cron"
 	_ "github.com/kyokomi/slackbot/plugins/lgtm"
 	_ "github.com/kyokomi/slackbot/plugins/suddendeath"
 	_ "github.com/kyokomi/slackbot/plugins/tiqav"
@@ -34,6 +35,9 @@ func main() {
 	c := slackbot.DefaultConfig()
 	c.Name = "いーすん"
 	c.SlackToken = token
+
+	cron.Setup()
+	defer cron.Stop()
 
 	slackbot.WebSocketRTM(ctx, c)
 
