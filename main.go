@@ -13,11 +13,18 @@ import (
 	// init insert bot.plugins
 	//	_ "github.com/kyokomi/slackbot/plugins/echo"
 
+	// 6 docomo APIとかで対話
 	"github.com/kyokomi/nepu-bot/plugins/nepubot"
-	"github.com/kyokomi/slackbot/plugins/cron"
+	// 5 LGTM画像ランダム
 	_ "github.com/kyokomi/slackbot/plugins/lgtm"
+	// 4 突然死のやつ
 	_ "github.com/kyokomi/slackbot/plugins/suddendeath"
+	// 3 tiqavで画像検索
 	_ "github.com/kyokomi/slackbot/plugins/tiqav"
+	// 2 twitterで画像検索
+	_ "github.com/kyokomi/nepu-bot/plugins/twitter"
+	// 1 cronの設定
+	"github.com/kyokomi/slackbot/plugins/cron"
 )
 
 //go:generate ego -package main
