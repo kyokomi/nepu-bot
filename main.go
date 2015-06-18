@@ -23,6 +23,8 @@ import (
 	_ "github.com/kyokomi/slackbot/plugins/tiqav"
 	// 2 twitterで画像検索
 	_ "github.com/kyokomi/nepu-bot/plugins/twitter"
+	// なるほどbot
+	_ "github.com/kyokomi/slackbot/plugins/naruhodo"
 	// 1 cronの設定
 	"github.com/kyokomi/slackbot/plugins/cron"
 )

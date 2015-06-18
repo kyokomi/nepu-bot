@@ -34,8 +34,8 @@
 		},
 		{
 			"ImportPath": "github.com/kyokomi/slackbot",
-			"Comment": "v1.0-19-gb5f6a4b",
-			"Rev": "b5f6a4b00999d0e75d524291bcf293fbd105b7fb"
+			"Comment": "v1.0-20-g50935aa",
+			"Rev": "50935aa2ec13c10aa5c0eb0bc6e3a9c424f06411"
 		},
 		{
 			"ImportPath": "github.com/nlopes/slack",
@@ -43,7 +43,7 @@
 		},
 		{
 			"ImportPath": "github.com/robfig/cron",
-			"Comment": "v1-2-g67823cd",
+			"Comment": "v1-5-g67823cd",
 			"Rev": "67823cd24dece1b04cced3a0a0b3ca2bc84d875e"
 		},
 		{
@@ -67,15 +67,15 @@
 		},
 		{
 			"ImportPath": "golang.org/x/net/context",
-			"Rev": "dfcbca9c45aeabb8971affa4f76b2d40f6f72328"
+			"Rev": "933937213561306ee71d265fb8a2913f20a55123"
 		},
 		{
 			"ImportPath": "golang.org/x/net/html",
-			"Rev": "dfcbca9c45aeabb8971affa4f76b2d40f6f72328"
+			"Rev": "933937213561306ee71d265fb8a2913f20a55123"
 		},
 		{
 			"ImportPath": "golang.org/x/net/websocket",
-			"Rev": "dfcbca9c45aeabb8971affa4f76b2d40f6f72328"
+			"Rev": "933937213561306ee71d265fb8a2913f20a55123"
 		}
 	]
 }
