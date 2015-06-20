@@ -10,7 +10,8 @@ import (
 	"github.com/kyokomi/slackbot/plugins"
 	"golang.org/x/net/context"
 
-	// init insert bot.plugins
+	// --- init insert bot.plugins ---
+	// 下から順番にプラグイン追加され実行される
 	//	_ "github.com/kyokomi/slackbot/plugins/echo"
 
 	// 6 docomo APIとかで対話
@@ -19,7 +20,7 @@ import (
 	_ "github.com/kyokomi/slackbot/plugins/lgtm"
 	// 4 突然死のやつ
 	_ "github.com/kyokomi/slackbot/plugins/suddendeath"
-	// 3 twitterで画像検索
+	// 3 twitterでいーすんの画像検索
 	_ "github.com/kyokomi/nepu-bot/plugins/twitter"
 	// 2 なるほどbot
 	_ "github.com/kyokomi/slackbot/plugins/naruhodo"
@@ -36,21 +37,23 @@ func main() {
 	flag.StringVar(&token, "token", os.Getenv("SLACK_BOT_TOKEN"), "SlackのBotToken")
 	flag.Parse()
 
+	// プラグインを設定
 	ctx := plugins.Context()
 	ctx = nepubot.NewContext(ctx, apikey)
 
+	// bot setting
 	c := slackbot.DefaultConfig()
 	c.Name = "いーすん"
 	c.SlackToken = token
 
+	// webSocket版のbotを開始
 	ctx = slackbot.WebSocketRTM(ctx, c)
 
-	store := cron.NewHerokuRedisStore()
-	defer store.Close()
-	cron.Setup()
-	cron.SetupStore(store)
-	cron.RefreshCron(ctx)
-	defer cron.Stop()
+	// cronを設定
+	cron.SetupWithRedisStore(ctx)
+	defer cron.Close()
+
+	// herokuで動くように
 
 	kami.Get("/", func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		IndexTmpl(w, plugins.GetPlugins())
