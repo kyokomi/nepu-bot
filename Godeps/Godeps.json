@@ -16,6 +16,10 @@
 			"Rev": "270d183ad77e2a30ed0b058cf9f8cb98ae244d2f"
 		},
 		{
+			"ImportPath": "github.com/gotsunami/go-cloudinary",
+			"Rev": "b7d418f8e8d160a25e3e3c7bb63720ea1a40844e"
+		},
+		{
 			"ImportPath": "github.com/guregu/kami",
 			"Rev": "e0080c4df3704d5f3bde91ccfce66acf50dfaf51"
 		},
@@ -24,13 +28,21 @@
 			"Rev": "8c199fb6259ffc1af525cc3ad52ee60ba8359669"
 		},
 		{
+			"ImportPath": "github.com/kyokomi/cloudinary",
+			"Rev": "b4d50f43b0e717259ac085007ed2592ea87b2b3c"
+		},
+		{
 			"ImportPath": "github.com/kyokomi/go-docomo/docomo",
 			"Rev": "4e7dfc66eb4f0fdda1fe8c6f1a3f1ccf26bee0b0"
 		},
 		{
+			"ImportPath": "github.com/kyokomi/goroku",
+			"Rev": "b16a8ccdb59c1b1f91d403d019919a37dda67c26"
+		},
+		{
 			"ImportPath": "github.com/kyokomi/slackbot",
-			"Comment": "v1.0-24-g10cc19a",
-			"Rev": "10cc19a00fff23a7f541fa7cbd70e8e81d69fc98"
+			"Comment": "v1.0-25-gb6d37d5",
+			"Rev": "b6d37d50b2fb220b6426a5962c2aee9273b27a67"
 		},
 		{
 			"ImportPath": "github.com/nlopes/slack",
@@ -44,6 +56,10 @@
 		{
 			"ImportPath": "github.com/shogo82148/go-shuffle",
 			"Rev": "c351b0256e6a2cd0504d014ad1f9a85c2b04007b"
+		},
+		{
+			"ImportPath": "github.com/vmihailenco/bufio",
+			"Rev": "24e7e48f60fc2d9e99e43c07485d9fff42051e66"
 		},
 		{
 			"ImportPath": "github.com/zenazn/goji/bind",
@@ -71,6 +87,31 @@
 		{
 			"ImportPath": "golang.org/x/net/websocket",
 			"Rev": "933937213561306ee71d265fb8a2913f20a55123"
+		},
+		{
+			"ImportPath": "gopkg.in/airbrake/gobrake.v1",
+			"Comment": "v1.1",
+			"Rev": "f12667a6c3bda272083682a04a05ee7a14e55378"
+		},
+		{
+			"ImportPath": "gopkg.in/bufio.v1",
+			"Comment": "v1",
+			"Rev": "567b2bfa514e796916c4747494d6ff5132a1dfce"
+		},
+		{
+			"ImportPath": "gopkg.in/mgo.v2",
+			"Comment": "r2015.01.24",
+			"Rev": "c6a7dce14133ccac2dcac3793f1d6e2ef048503a"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v2",
+			"Comment": "v2.3.2",
+			"Rev": "e6179049628164864e6e84e973cfb56335748dea"
+		},
+		{
+			"ImportPath": "gopkg.in/vmihailenco/msgpack.v1",
+			"Comment": "v1.0",
+			"Rev": "721f2af77065519b762a8d5fa2b441d29e96bbca"
 		}
 	]
 }

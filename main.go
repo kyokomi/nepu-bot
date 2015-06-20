@@ -43,10 +43,14 @@ func main() {
 	c.Name = "いーすん"
 	c.SlackToken = token
 
-	cron.Setup()
-	defer cron.Stop()
+	ctx = slackbot.WebSocketRTM(ctx, c)
 
-	slackbot.WebSocketRTM(ctx, c)
+	store := cron.NewHerokuRedisStore()
+	defer store.Close()
+	cron.Setup()
+	cron.SetupStore(store)
+	cron.RefreshCron(ctx)
+	defer cron.Stop()
 
 	kami.Get("/", func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 		IndexTmpl(w, plugins.GetPlugins())
