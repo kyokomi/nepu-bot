@@ -12,11 +12,6 @@
 			"Rev": "6122e68c2642b7b75c538a63b15168c6c80fb757"
 		},
 		{
-			"ImportPath": "github.com/bitly/go-simplejson",
-			"Comment": "v0.4.3-30-g18db6e6",
-			"Rev": "18db6e68d8fd9cbf2e8ebe4c81a78b96fd9bf05a"
-		},
-		{
 			"ImportPath": "github.com/go-xweb/log",
 			"Rev": "270d183ad77e2a30ed0b058cf9f8cb98ae244d2f"
 		},
@@ -34,8 +29,8 @@
 		},
 		{
 			"ImportPath": "github.com/kyokomi/slackbot",
-			"Comment": "v1.0-21-g17650bb",
-			"Rev": "17650bba546b41236ccb0fbe5422e28301b8da1e"
+			"Comment": "v1.0-24-g10cc19a",
+			"Rev": "10cc19a00fff23a7f541fa7cbd70e8e81d69fc98"
 		},
 		{
 			"ImportPath": "github.com/nlopes/slack",
