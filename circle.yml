@@ -1,3 +1,9 @@
+checkout:
+  post:
+    - rm -rf $HOME/.go_workspace/src/github.com/kyokomi/*
+    - mkdir -p $HOME/.go_workspace/src/github.com/kyokomi
+    - ln -snf $HOME/$CIRCLE_PROJECT_REPONAME $HOME/.go_workspace/src/github.com/kyokomi
+
 dependencies:
   pre:
     - go get github.com/tools/godep/...
