@@ -10,6 +10,10 @@ dependencies:
   override:
     - godep go build -v
 
+test:
+  override:
+    - godep go test -v ./... -race
+
 deployment:
   staging:
     branch: master
