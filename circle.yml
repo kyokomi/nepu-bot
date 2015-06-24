@@ -1,3 +1,7 @@
+dependencies:
+  override:
+    - godep go build -v
+
 deployment:
   staging:
     branch: master
