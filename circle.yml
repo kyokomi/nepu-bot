@@ -1,4 +1,6 @@
 dependencies:
+  pre:
+    - go get github.com/tools/godep/...
   override:
     - godep go build -v
 
