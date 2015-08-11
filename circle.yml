@@ -11,8 +11,13 @@ dependencies:
     - godep go build -v
 
 test:
+  pre:
+    - go get github.com/kyokomi/go-cyclomatic-complexity
+    - go get github.com/kyokomi/geiborugu
   override:
     - godep go test -v ./... -race
+  post:
+    - go-cyclomatic-complexity . | geiborugu --channel "#nepu_nepu"
 
 deployment:
   staging:
