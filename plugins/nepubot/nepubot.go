@@ -27,10 +27,9 @@ type NepuMessage struct {
 
 func (r NepuMessage) CheckMessage(ctx context.Context, message string) (bool, string) {
 	api := slackctx.FromSlackClient(ctx)
-	botUser := api.GetInfo().User
 	botName := api.Name
 
-	if strings.Index(message, botUser.Id) != -1 {
+	if strings.Index(message, botName) != -1 {
 		// MessageにBotのIDが含まれる
 		message = message[strings.Index(message, ":")+len(":"):]
 	} else if strings.Index(message, botName) != -1 {
@@ -62,7 +61,7 @@ func (r NepuMessage) DoAction(ctx context.Context, message string) bool {
 		}()
 	}
 
-	m := NewMessage(msEvent.UserId, msEvent.ChannelId, message)
+	m := NewMessage(msEvent.BotID, msEvent.Channel, message)
 	plugins.SendMessage(ctx, DocomoAPIMessage(ctx, m))
 
 	return false // stop not next
