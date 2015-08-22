@@ -7,9 +7,9 @@ import (
 )
 
 const (
-	DEFAULT_STARS_USERID = ""
-	DEFAULT_STARS_COUNT  = 100
-	DEFAULT_STARS_PAGE   = 1
+	DEFAULT_STARS_USER  = ""
+	DEFAULT_STARS_COUNT = 100
+	DEFAULT_STARS_PAGE  = 1
 )
 
 type StarsParameters struct {
@@ -18,14 +18,9 @@ type StarsParameters struct {
 	Page  int
 }
 
-// TODO: Verify this. The whole thing is complicated. I don't like the way they mixed things
-// It also appears to be a bug in parsing the message
+// StarredItem is an item that has been starred.
 type StarredItem struct {
-	Type      string `json:"type"`
-	ChannelId string `json:"channel"`
-	Message   `json:"message,omitempty"`
-	File      `json:"file,omitempty"`
-	Comment   `json:"comment,omitempty"`
+	Item
 }
 
 type starsResponseFull struct {
@@ -36,7 +31,7 @@ type starsResponseFull struct {
 
 func NewStarsParameters() StarsParameters {
 	return StarsParameters{
-		User:  DEFAULT_STARS_USERID,
+		User:  DEFAULT_STARS_USER,
 		Count: DEFAULT_STARS_COUNT,
 		Page:  DEFAULT_STARS_PAGE,
 	}
@@ -52,12 +47,11 @@ func NewStarsParameters() StarsParameters {
 //             ...
 //        }
 //    }
-func (api *Slack) GetStarred(params StarsParameters) ([]StarredItem, *Paging, error) {
-	response := &starsResponseFull{}
+func (api *Client) GetStarred(params StarsParameters) ([]StarredItem, *Paging, error) {
 	values := url.Values{
 		"token": {api.config.token},
 	}
-	if params.User != DEFAULT_STARS_USERID {
+	if params.User != DEFAULT_STARS_USER {
 		values.Add("user", params.User)
 	}
 	if params.Count != DEFAULT_STARS_COUNT {
@@ -66,7 +60,8 @@ func (api *Slack) GetStarred(params StarsParameters) ([]StarredItem, *Paging, er
 	if params.Page != DEFAULT_STARS_PAGE {
 		values.Add("page", strconv.Itoa(params.Page))
 	}
-	err := parseResponse("stars.list", values, response, api.debug)
+	response := &starsResponseFull{}
+	err := post("stars.list", values, response, api.debug)
 	if err != nil {
 		return nil, nil, err
 	}
