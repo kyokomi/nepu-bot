@@ -1,6 +1,9 @@
 {
 	"ImportPath": "github.com/kyokomi/nepu-bot",
 	"GoVersion": "go1.5",
+	"Packages": [
+		"./..."
+	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/PuerkitoBio/goquery",
@@ -64,6 +67,10 @@
 			"ImportPath": "github.com/robfig/cron",
 			"Comment": "v1-5-g67823cd",
 			"Rev": "67823cd24dece1b04cced3a0a0b3ca2bc84d875e"
+		},
+		{
+			"ImportPath": "github.com/shogo82148/go-shuffle",
+			"Rev": "c351b0256e6a2cd0504d014ad1f9a85c2b04007b"
 		},
 		{
 			"ImportPath": "github.com/vmihailenco/bufio",
