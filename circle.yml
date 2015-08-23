@@ -7,6 +7,7 @@ checkout:
 dependencies:
   pre:
     - go get github.com/tools/godep/...
+    - godep restore
   override:
     - godep go build -v
 

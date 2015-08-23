@@ -1,0 +1,18 @@
+{
+	"ImportPath": "github.com/kyokomi/nepu-bot/plugins/twitter",
+	"GoVersion": "go1.5",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/kyokomi/slackbot/plugins",
+			"Comment": "v2.0",
+			"Rev": "365accba482ef9c6913df0bb24c508275d8ce929"
+		},
+		{
+			"ImportPath": "github.com/shogo82148/go-shuffle",
+			"Rev": "c351b0256e6a2cd0504d014ad1f9a85c2b04007b"
+		}
+	]
+}
