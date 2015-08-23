@@ -29,6 +29,10 @@
 			"Rev": "b4d50f43b0e717259ac085007ed2592ea87b2b3c"
 		},
 		{
+			"ImportPath": "github.com/kyokomi/go-docomo/docomo",
+			"Rev": "4e7dfc66eb4f0fdda1fe8c6f1a3f1ccf26bee0b0"
+		},
+		{
 			"ImportPath": "github.com/kyokomi/goroku",
 			"Rev": "b16a8ccdb59c1b1f91d403d019919a37dda67c26"
 		},
