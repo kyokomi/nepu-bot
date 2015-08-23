@@ -1,9 +1,9 @@
 package twitter
 
 import (
+	"log"
 	"strings"
 
-	"github.com/go-xweb/log"
 	"github.com/kyokomi/slackbot/plugins"
 )
 
