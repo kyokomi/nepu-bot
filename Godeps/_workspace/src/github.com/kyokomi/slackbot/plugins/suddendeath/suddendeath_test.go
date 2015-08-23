@@ -1,30 +1,33 @@
-package suddendeath
+package suddendeath_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/kyokomi/slackbot/plugins"
-	"golang.org/x/net/context"
+	"github.com/kyokomi/slackbot/plugins/suddendeath"
+)
+
+var testEvent = plugins.NewBotEvent(plugins.DebugMessageSender{},
+	"bot",
+	"user",
+	"突然の死だああああああああああ！",
+	"#general",
 )
 
 func TestCheckMessage(t *testing.T) {
-	l := SuddenDeathMessage{}
-	ok, _ := l.CheckMessage(context.Background(), "突然の死だああああああああああ！")
+	p := suddendeath.Plugin{}
+	ok, _ := p.CheckMessage(*testEvent, testEvent.BaseText())
 	if !ok {
 		t.Errorf("ERROR check = NG")
 	}
 }
 
 func TestDoAction(t *testing.T) {
-	l := SuddenDeathMessage{}
-	ctx := context.Background()
-	ctx = plugins.WithSendMessageFunc(ctx, func(message string) {
-		fmt.Println(message)
-	})
-	next := l.DoAction(ctx, "突然の死だああああああああああ！")
+	p := suddendeath.Plugin{}
 
-	if next {
+	next := p.DoAction(*testEvent, testEvent.BaseText())
+
+	if next != false {
 		t.Errorf("ERROR next != false")
 	}
 }

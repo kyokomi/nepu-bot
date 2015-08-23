@@ -4,30 +4,9 @@ import (
 	"strings"
 
 	"github.com/kyokomi/go-docomo/docomo"
-	"golang.org/x/net/context"
 )
 
-func NewContext(ctx context.Context, apiKey string) context.Context {
-	return docomo.NewContext(ctx, apiKey)
-}
-
-// Message is Slack Receive Message.
-type Message struct {
-	userID, userName, channelID, channelName, text string
-}
-
-func NewMessage(userID, channelID, text string) Message {
-	var m Message
-	m.userID = userID
-	m.channelID = channelID
-	m.text = text
-	return m
-}
-
-func DocomoAPIMessage(ctx context.Context, m Message) string {
-	d := docomo.FromContext(ctx)
-
-	text := m.text
+func (n Plugin) DocomoAPIMessage(userID, text string) string {
 	var resMessage string
 	switch {
 	default:
@@ -35,11 +14,11 @@ func DocomoAPIMessage(ctx context.Context, m Message) string {
 
 		// 雑談API呼び出し
 		dq := docomo.DialogueRequest{}
-		dq.Nickname = &m.userName
+		dq.Nickname = &userID
 		dq.Utt = &text
-		res, err := d.Dialogue.Get(dq, true)
+		res, err := n.Docomo.Dialogue.Get(dq, true)
 		if err != nil {
-			return m.text
+			return text
 		}
 
 		resMessage = res.Utt
@@ -51,9 +30,9 @@ func DocomoAPIMessage(ctx context.Context, m Message) string {
 		for _, word := range []string{"おしえて", "教えて"} {
 			qa.QAText = strings.Replace(qa.QAText, word, "", -1)
 		}
-		res, err := d.KnowledgeQA.Get(qa)
+		res, err := n.Docomo.KnowledgeQA.Get(qa)
 		if err != nil {
-			return m.text
+			return text
 		}
 
 		if res.Success() {

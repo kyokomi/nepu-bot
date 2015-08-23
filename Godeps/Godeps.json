@@ -1,6 +1,6 @@
 {
 	"ImportPath": "github.com/kyokomi/nepu-bot",
-	"GoVersion": "go1.4.2",
+	"GoVersion": "go1.5",
 	"Deps": [
 		{
 			"ImportPath": "github.com/PuerkitoBio/goquery",
@@ -12,28 +12,21 @@
 			"Rev": "6122e68c2642b7b75c538a63b15168c6c80fb757"
 		},
 		{
-			"ImportPath": "github.com/go-xweb/log",
-			"Rev": "270d183ad77e2a30ed0b058cf9f8cb98ae244d2f"
+			"ImportPath": "github.com/bradfitz/http2",
+			"Rev": "f8202bc903bda493ebba4aa54922d78430c2c42f"
+		},
+		{
+			"ImportPath": "github.com/braintree/manners",
+			"Comment": "0.4.0-6-g9e2a271",
+			"Rev": "9e2a2714de21eb092ead2ef56d8c7a60d7928819"
 		},
 		{
 			"ImportPath": "github.com/gotsunami/go-cloudinary",
 			"Rev": "b7d418f8e8d160a25e3e3c7bb63720ea1a40844e"
 		},
 		{
-			"ImportPath": "github.com/guregu/kami",
-			"Rev": "e0080c4df3704d5f3bde91ccfce66acf50dfaf51"
-		},
-		{
-			"ImportPath": "github.com/julienschmidt/httprouter",
-			"Rev": "8c199fb6259ffc1af525cc3ad52ee60ba8359669"
-		},
-		{
 			"ImportPath": "github.com/kyokomi/cloudinary",
 			"Rev": "b4d50f43b0e717259ac085007ed2592ea87b2b3c"
-		},
-		{
-			"ImportPath": "github.com/kyokomi/go-docomo/docomo",
-			"Rev": "4e7dfc66eb4f0fdda1fe8c6f1a3f1ccf26bee0b0"
 		},
 		{
 			"ImportPath": "github.com/kyokomi/goroku",
@@ -41,8 +34,22 @@
 		},
 		{
 			"ImportPath": "github.com/kyokomi/slackbot",
-			"Comment": "v1.0-28-gf476f43",
-			"Rev": "f476f43387047c70ec329f66cf936b22dce03308"
+			"Comment": "v1.0-34-g9077fa6",
+			"Rev": "9077fa6e2d5888a4ac8aa1459facb54b9c6163c5"
+		},
+		{
+			"ImportPath": "github.com/labstack/echo",
+			"Comment": "v1.0.0-20-g35d018c",
+			"Rev": "35d018c671c30559348332400c63344394488976"
+		},
+		{
+			"ImportPath": "github.com/labstack/gommon/color",
+			"Comment": "v0.0.3-5-g3dc2d67",
+			"Rev": "3dc2d67251832fa0da35728aada6a9c377cb2442"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-colorable",
+			"Rev": "d67e0b7d1797975196499f79bcc322c08b9f218b"
 		},
 		{
 			"ImportPath": "github.com/nlopes/slack",
@@ -55,39 +62,25 @@
 			"Rev": "67823cd24dece1b04cced3a0a0b3ca2bc84d875e"
 		},
 		{
-			"ImportPath": "github.com/shogo82148/go-shuffle",
-			"Rev": "c351b0256e6a2cd0504d014ad1f9a85c2b04007b"
-		},
-		{
 			"ImportPath": "github.com/vmihailenco/bufio",
 			"Rev": "24e7e48f60fc2d9e99e43c07485d9fff42051e66"
 		},
 		{
 			"ImportPath": "github.com/zenazn/goji/bind",
-			"Comment": "v0.9.0-20-gd198bcf",
-			"Rev": "d198bcf1ddf7d69872b506da7d4c4862121a9d8a"
-		},
-		{
-			"ImportPath": "github.com/zenazn/goji/graceful",
-			"Comment": "v0.9.0-20-gd198bcf",
-			"Rev": "d198bcf1ddf7d69872b506da7d4c4862121a9d8a"
-		},
-		{
-			"ImportPath": "github.com/zenazn/goji/web/mutil",
-			"Comment": "v0.9.0-20-gd198bcf",
-			"Rev": "d198bcf1ddf7d69872b506da7d4c4862121a9d8a"
+			"Comment": "v0.9.0-25-gf11b3b8",
+			"Rev": "f11b3b82931df3c540a0a960b6b1de60094d33d6"
 		},
 		{
 			"ImportPath": "golang.org/x/net/context",
-			"Rev": "933937213561306ee71d265fb8a2913f20a55123"
+			"Rev": "66f0418ca41253f8d1a024eb9754e9441a8e79b9"
 		},
 		{
 			"ImportPath": "golang.org/x/net/html",
-			"Rev": "933937213561306ee71d265fb8a2913f20a55123"
+			"Rev": "66f0418ca41253f8d1a024eb9754e9441a8e79b9"
 		},
 		{
 			"ImportPath": "golang.org/x/net/websocket",
-			"Rev": "933937213561306ee71d265fb8a2913f20a55123"
+			"Rev": "66f0418ca41253f8d1a024eb9754e9441a8e79b9"
 		},
 		{
 			"ImportPath": "gopkg.in/airbrake/gobrake.v1",
@@ -101,8 +94,8 @@
 		},
 		{
 			"ImportPath": "gopkg.in/mgo.v2",
-			"Comment": "r2015.01.24",
-			"Rev": "c6a7dce14133ccac2dcac3793f1d6e2ef048503a"
+			"Comment": "r2015.06.03-3-g3569c88",
+			"Rev": "3569c88678d88179dcbd68d02ab081cbca3cd4d0"
 		},
 		{
 			"ImportPath": "gopkg.in/redis.v2",
