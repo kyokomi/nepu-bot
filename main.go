@@ -53,11 +53,11 @@ func main() {
 
 	// add plugin
 	nepuBotPlugin := nepubot.Plugin{Docomo: d, Plugins: botCtx.Plugins}
-	botCtx.AddPlugin("nepu", &nepuBotPlugin)
 	botCtx.AddPlugin("cron", cron.Plugin{CronContext: cronCtx})
 	botCtx.AddPlugin("naruhodo", naruhodo.Plugin{})
 	botCtx.AddPlugin("lgtm", lgtm.Plugin{})
 	botCtx.AddPlugin("suddendeath", suddendeath.Plugin{})
+	botCtx.AddPlugin("nepu", &nepuBotPlugin)
 
 	// start
 	botCtx.WebSocketRTM()
