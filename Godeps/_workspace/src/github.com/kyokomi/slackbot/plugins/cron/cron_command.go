@@ -10,19 +10,26 @@ import (
 type ActionType string
 
 const (
-	AddAction  ActionType = "add"
-	DelAction  ActionType = "del"
-	StopAction ActionType = "stop"
-	ListAction ActionType = "list"
-	HelpAction ActionType = "help"
+	AddAction       ActionType = "add"
+	RandomAddAction ActionType = "random"
+	DelAction       ActionType = "del"
+	DeleteAction    ActionType = "delete"
+	StopAction      ActionType = "stop"
+	ListAction      ActionType = "list"
+	RefreshAction   ActionType = "refresh"
+	HelpAction      ActionType = "help"
 )
 
 type CronCommand struct {
 	Trigger  string // cron
 	Action   ActionType
 	CronSpec string
-	Message  string
+	Args     []string
 	CronID   string
+}
+
+func (c CronCommand) Message() string {
+	return strings.Join(c.Args, " ")
 }
 
 func generateCronID() string {
@@ -37,30 +44,22 @@ func (c *CronCommand) Scan(command string) error {
 	c.Action = ActionType(commands[1])
 
 	switch c.Action {
-	case AddAction:
+	case AddAction, RandomAddAction:
 		// cron add 1 * * * * * hogehoge
-		if len(commands) != 9 {
+		if len(commands) < 9 {
 			return fmt.Errorf("commands length error %d", len(commands))
 		}
-
 		c.CronSpec = strings.Join(commands[2:8], " ")
-		c.Message = commands[8]
+		c.Args = commands[8:]
 		c.CronID = generateCronID()
-
-	case DelAction, StopAction:
+	case DelAction, DeleteAction, StopAction:
 		// cron del <cron_id>
 		if len(commands) != 3 {
 			return fmt.Errorf("commands length error %d", len(commands))
 		}
 		c.CronID = commands[2]
-
-	case ListAction:
+	case ListAction, RefreshAction, HelpAction:
 		// cron list
-		if len(commands) != 2 {
-			return fmt.Errorf("commands length error %d", len(commands))
-		}
-	case HelpAction:
-		// cron help
 		if len(commands) != 2 {
 			return fmt.Errorf("commands length error %d", len(commands))
 		}
@@ -70,7 +69,7 @@ func (c *CronCommand) Scan(command string) error {
 }
 
 func (c CronCommand) String() string {
-	return fmt.Sprintf("%s %s %s %s", c.Trigger, c.Action, c.CronSpec, c.Message)
+	return fmt.Sprintf("%s %s %s %s", c.Trigger, c.Action, c.CronSpec, c.Message())
 }
 
 func (c CronCommand) CronKey() string {

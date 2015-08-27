@@ -52,7 +52,8 @@ func main() {
 	d := docomo.NewClient(apikey)
 
 	// add plugin
-	botCtx.AddPlugin("nepu", nepubot.Plugin{Docomo: d, Plugins: botCtx.Plugins})
+	nepuBotPlugin := nepubot.Plugin{Docomo: d, Plugins: botCtx.Plugins}
+	botCtx.AddPlugin("nepu", &nepuBotPlugin)
 	botCtx.AddPlugin("cron", cron.Plugin{CronContext: cronCtx})
 	botCtx.AddPlugin("naruhodo", naruhodo.Plugin{})
 	botCtx.AddPlugin("lgtm", lgtm.Plugin{})
@@ -65,7 +66,7 @@ func main() {
 
 	e := echo.New()
 	e.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		IndexTmpl(w, botCtx.Plugins.Plugins)
+		IndexTmpl(w, botCtx.Plugins.GetPlugins())
 	})
 	e.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("PONG"))

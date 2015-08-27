@@ -8,10 +8,11 @@ import (
 	"github.com/nlopes/slack"
 
 	"github.com/kyokomi/slackbot/plugins"
+	"github.com/kyokomi/slackbot/plugins/sysstd"
 )
 
 type BotContext struct {
-	Plugins *plugins.PluginsContext
+	Plugins plugins.PluginManager
 	Client  *slack.Client
 	RTM     *slack.RTM
 }
@@ -24,7 +25,8 @@ func NewBotContext(token string) (*BotContext, error) {
 	ctx := &BotContext{}
 	ctx.Client = slack.New(token)
 	ctx.Client.SetDebug(true) // TODO: あとで
-	ctx.Plugins = plugins.NewPluginsContext(ctx)
+	ctx.Plugins = plugins.NewPluginManager(ctx)
+	ctx.AddPlugin("sysstd", sysstd.Plugin{})
 
 	return ctx, nil
 }
@@ -70,15 +72,16 @@ func (ctx *BotContext) WebSocketRTM() {
 }
 
 func (ctx *BotContext) responseEvent(ev *slack.MessageEvent) {
-	user := ctx.RTM.GetInfo().User
-	if user.ID == ev.BotID {
-		// 自分のやつはスルーする
-		return
-	}
-	ctx.Plugins.ExecPlugins(ev.BotID, user.ID, ev.Text, ev.Channel)
+	botUser := ctx.RTM.GetInfo().User
+
+	e := plugins.NewBotEvent(ctx, botUser.ID, botUser.Name, ev.User, ev.Username, ev.Text, ev.Channel)
+	ctx.Plugins.ExecPlugins(e)
 }
 
 func (ctx *BotContext) SendMessage(message, channel string) {
+	if !ctx.Plugins.IsReply() {
+		return
+	}
 	log.Println("WithSendChannelMessageFunc", channel, message)
 	if message != "" && channel != "" {
 		ctx.RTM.SendMessage(ctx.RTM.NewOutgoingMessage(message, channel))

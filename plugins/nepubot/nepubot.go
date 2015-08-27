@@ -17,10 +17,10 @@ var rd = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 type Plugin struct {
 	Docomo  *docomo.Client
-	Plugins *plugins.PluginsContext // TODO: ちょと無理矢理...
+	Plugins plugins.PluginManager // TODO: ちょと無理矢理...
 }
 
-func (r Plugin) CheckMessage(event plugins.BotEvent, message string) (bool, string) {
+func (r *Plugin) CheckMessage(event plugins.BotEvent, message string) (bool, string) {
 	botID := event.BotID()
 
 	if strings.Index(message, botID) != -1 {
@@ -43,7 +43,7 @@ func (r Plugin) CheckMessage(event plugins.BotEvent, message string) (bool, stri
 	return true, message
 }
 
-func (r Plugin) DoAction(event plugins.BotEvent, message string) bool {
+func (r *Plugin) DoAction(event plugins.BotEvent, message string) bool {
 	if strings.Index(message, "静かに") != -1 {
 		r.Plugins.StopReply()
 		go func() {
@@ -53,7 +53,7 @@ func (r Plugin) DoAction(event plugins.BotEvent, message string) bool {
 		}()
 	}
 
-	event.Reply(r.DocomoAPIMessage(event.SenderID(), message))
+	event.Reply(r.DocomoAPIMessage(event.SenderName(), message))
 
 	return false // stop not next
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/kyokomi/go-docomo/docomo"
 )
 
-func (n Plugin) DocomoAPIMessage(userID, text string) string {
+func (n *Plugin) DocomoAPIMessage(userName, text string) string {
 	var resMessage string
 	switch {
 	default:
@@ -14,7 +14,7 @@ func (n Plugin) DocomoAPIMessage(userID, text string) string {
 
 		// 雑談API呼び出し
 		dq := docomo.DialogueRequest{}
-		dq.Nickname = &userID
+		dq.Nickname = &userName
 		dq.Utt = &text
 		res, err := n.Docomo.Dialogue.Get(dq, true)
 		if err != nil {
