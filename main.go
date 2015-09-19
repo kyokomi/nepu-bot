@@ -50,14 +50,13 @@ func main() {
 	cronCtx.AllRefreshCron(botCtx)
 
 	d := docomo.NewClient(apikey)
-
+	redisRepository := NewRedisRepository()
 	// add plugin
-	nepuBotPlugin := nepubot.Plugin{Docomo: d, Plugins: botCtx.Plugins}
 	botCtx.AddPlugin("cron", cron.Plugin{CronContext: cronCtx})
 	botCtx.AddPlugin("naruhodo", naruhodo.Plugin{})
 	botCtx.AddPlugin("lgtm", lgtm.Plugin{})
 	botCtx.AddPlugin("suddendeath", suddendeath.Plugin{})
-	botCtx.AddPlugin("nepu", &nepuBotPlugin)
+	botCtx.AddPlugin("nepu", nepubot.NewPlugin(botCtx.Plugins, d, redisRepository))
 
 	// start
 	botCtx.WebSocketRTM()

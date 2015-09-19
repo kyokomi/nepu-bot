@@ -5,8 +5,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kyokomi/go-docomo/docomo"
 	"github.com/kyokomi/slackbot/plugins"
+
+	godocomo "github.com/kyokomi/go-docomo/docomo"
+	"github.com/kyokomi/slackbot"
+	"github.com/kyokomi/slackbot/plugins/docomo"
 )
 
 const (
@@ -16,31 +19,28 @@ const (
 var rd = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 type Plugin struct {
-	Docomo  *docomo.Client
+	docomo  plugins.BotMessagePlugin
 	Plugins plugins.PluginManager // TODO: ちょと無理矢理...
 }
 
-func (r *Plugin) CheckMessage(event plugins.BotEvent, message string) (bool, string) {
-	botID := event.BotID()
+func NewPlugin(pm plugins.PluginManager, docomoClient *godocomo.Client, repository slackbot.Repository) plugins.BotMessagePlugin {
+	return &Plugin{
+		docomo:  docomo.NewPlugin(docomoClient, repository),
+		Plugins: pm,
+	}
+}
 
-	if strings.Index(message, botID) != -1 {
-		// MessageにBotのIDが含まれる
-		message = message[strings.Index(message, ":")+len(":"):]
-	} else if strings.Index(message, botID) != -1 {
-		// Messageに名前がふくまれている
-		text := strings.Replace(message, botID, "", 1)
-		if len(text) == 0 {
-			text = "hello" // 名前だけの場合は固定で挨拶
-		}
-		message = text
-	} else {
-		a := int(rd.Int() % randomMessageCount)
-		if a != 1 {
-			return false, ""
-		}
+func (r *Plugin) CheckMessage(event plugins.BotEvent, message string) (bool, string) {
+	if ok, message := r.docomo.CheckMessage(event, message); ok {
+		return true, message
 	}
 
-	return true, message
+	a := int(rd.Int() % randomMessageCount)
+	if a == 1 {
+		return true, message
+	}
+
+	return false, ""
 }
 
 func (r *Plugin) DoAction(event plugins.BotEvent, message string) bool {
@@ -52,10 +52,14 @@ func (r *Plugin) DoAction(event plugins.BotEvent, message string) bool {
 			r.Plugins.StartReply()
 		}()
 	}
-
-	event.Reply(r.DocomoAPIMessage(event.SenderName(), message))
-
-	return false // stop not next
+	return r.docomo.DoAction(plugins.NewBotEvent(NewNepubotEvent(rd, event.GetMessageSender()),
+		event.BotID(),
+		event.BotName(),
+		event.SenderID(),
+		event.SenderName(),
+		event.BaseText(),
+		event.Channel(),
+	), message)
 }
 
 var _ plugins.BotMessagePlugin = (*Plugin)(nil)
