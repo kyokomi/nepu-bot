@@ -41,8 +41,8 @@
 		},
 		{
 			"ImportPath": "github.com/kyokomi/slackbot",
-			"Comment": "v2.0-17-g1f6e99f",
-			"Rev": "1f6e99f9c128a6bff4f60d4f36a5afc30c688d55"
+			"Comment": "v2.1-3-g5325527",
+			"Rev": "532552797cecc697b6ecc9e34cc608d9b8172440"
 		},
 		{
 			"ImportPath": "github.com/labstack/echo",
