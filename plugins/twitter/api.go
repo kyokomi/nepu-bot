@@ -149,3 +149,70 @@ func searchImages(accessToken, keyword string, count int) ([]string, error) {
 
 	return urls[:count], nil
 }
+
+var favoritesImageURL = "https://api.twitter.com/1.1/favorites/list.json"
+
+type TwitterFavoritesResponse struct {
+	Entities struct {
+		Media []struct {
+			MediaURL      string `json:"media_url"`
+			MediaURLHTTPs string `json:"media_url_https"`
+		} `json:"media"`
+	} `json:"extended_entities"`
+}
+
+func (r TwitterFavoritesResponse) GetMediaURLs() []string {
+	urls := map[string]bool{}
+	for _, m := range r.Entities.Media {
+		if postImages[m.MediaURL] {
+			continue
+		}
+		if urls[m.MediaURL] {
+			continue
+		}
+		urls[m.MediaURL] = true
+	}
+
+	results := make([]string, len(urls))
+	i := 0
+	for url, _ := range urls {
+		results[i] = url
+		i++
+	}
+	return results
+}
+
+func getFavoritesImage(accessToken string, count int, screenName string) ([]string, error) {
+	resp, err := getRequest(fmt.Sprintf("%s?count=%d&screen_name=%s", favoritesImageURL, count, screenName), accessToken)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	searchBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var response []TwitterFavoritesResponse
+	if err := json.Unmarshal(searchBody, &response); err != nil {
+		return nil, err
+	}
+
+	mediaURLs := []string{}
+	for _, re := range response {
+		mediaURLs = append(mediaURLs, re.GetMediaURLs()...)
+	}
+	return mediaURLs, nil
+}
+
+func getRequest(apiURL string, accessToken string) (*http.Response, error) {
+	searchReq, err := http.NewRequest("GET", apiURL, nil)
+	if err != nil {
+		return nil, err
+	}
+	searchReq.Header.Set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+	searchReq.Header.Set("Authorization", "Bearer "+accessToken)
+	c := http.Client{}
+	return c.Do(searchReq)
+}
