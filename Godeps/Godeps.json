@@ -24,6 +24,10 @@
 			"Rev": "9e2a2714de21eb092ead2ef56d8c7a60d7928819"
 		},
 		{
+			"ImportPath": "github.com/golang/mock/gomock",
+			"Rev": "06883d979f10cc178f2716846215c8cf90f9e363"
+		},
+		{
 			"ImportPath": "github.com/gotsunami/go-cloudinary",
 			"Rev": "b7d418f8e8d160a25e3e3c7bb63720ea1a40844e"
 		},
@@ -41,8 +45,8 @@
 		},
 		{
 			"ImportPath": "github.com/kyokomi/slackbot",
-			"Comment": "v2.1-3-g5325527",
-			"Rev": "532552797cecc697b6ecc9e34cc608d9b8172440"
+			"Comment": "v2.1-4-g09f6c21",
+			"Rev": "09f6c21f2fc327cd26966cc72b21f7c456583172"
 		},
 		{
 			"ImportPath": "github.com/labstack/echo",
