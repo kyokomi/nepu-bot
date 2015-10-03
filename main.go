@@ -14,6 +14,7 @@ import (
 	"github.com/kyokomi/nepu-bot/plugins/nepubot"
 	"github.com/kyokomi/slackbot"
 	"github.com/kyokomi/slackbot/plugins/cron"
+	"github.com/kyokomi/slackbot/plugins/kohaimage"
 	"github.com/kyokomi/slackbot/plugins/lgtm"
 	"github.com/kyokomi/slackbot/plugins/naruhodo"
 	"github.com/kyokomi/slackbot/plugins/suddendeath"
@@ -57,6 +58,7 @@ func main() {
 	botCtx.AddPlugin("lgtm", lgtm.Plugin{})
 	botCtx.AddPlugin("suddendeath", suddendeath.Plugin{})
 	botCtx.AddPlugin("nepu", nepubot.NewPlugin(botCtx.Plugins, d, redisRepository))
+	botCtx.AddPlugin("koha", kohaimage.NewPlugin(kohaimage.NewKohaAPI()))
 
 	// start
 	botCtx.WebSocketRTM()
