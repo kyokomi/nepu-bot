@@ -54,11 +54,11 @@ func main() {
 	redisRepository := NewRedisRepository()
 	// add plugin
 	botCtx.AddPlugin("cron", cron.Plugin{CronContext: cronCtx})
+	botCtx.AddPlugin("koha", kohaimage.NewPlugin(kohaimage.NewKohaAPI()))
 	botCtx.AddPlugin("naruhodo", naruhodo.Plugin{})
 	botCtx.AddPlugin("lgtm", lgtm.Plugin{})
 	botCtx.AddPlugin("suddendeath", suddendeath.Plugin{})
 	botCtx.AddPlugin("nepu", nepubot.NewPlugin(botCtx.Plugins, d, redisRepository))
-	botCtx.AddPlugin("koha", kohaimage.NewPlugin(kohaimage.NewKohaAPI()))
 
 	// start
 	botCtx.WebSocketRTM()
