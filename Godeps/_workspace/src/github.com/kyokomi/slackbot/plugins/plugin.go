@@ -11,7 +11,7 @@ type PluginManager interface {
 	StopReply()
 	StartReply()
 	IsReply() bool
-	GetPlugins() []Plugin
+	GetPlugins() []Plugin // deepCopy
 }
 
 type plugins struct {
@@ -69,12 +69,15 @@ func (ps *plugins) SendMessage(message string, channel string) {
 }
 
 func (ps *plugins) GetPlugins() []Plugin {
-	return ps.plugins
+	deepCopy := make([]Plugin, len(ps.plugins))
+	copy(deepCopy, ps.plugins)
+	return deepCopy
 }
 
 type BotMessagePlugin interface {
 	CheckMessage(event BotEvent, message string) (bool, string)
 	DoAction(event BotEvent, message string) bool
+	Help() string
 }
 
 type Plugin struct {
@@ -101,7 +104,7 @@ func (b BotID) Equal(bot string) bool {
 }
 
 func (b BotID) LinkID() string {
-	return fmt.Sprintf("<@%s>:", b)
+	return fmt.Sprintf("<@%s>", b)
 }
 
 type BotEvent struct {
@@ -157,6 +160,9 @@ func (b *BotEvent) BotName() string {
 func (b *BotEvent) BotLinkID() string {
 	return b.botID.LinkID()
 }
+func (b *BotEvent) BotLinkIDForClient() string {
+	return b.botID.LinkID() + ":"
+}
 
 func (b *BotEvent) SenderID() string {
 	return b.senderID
@@ -168,6 +174,8 @@ func (b *BotEvent) SenderName() string {
 
 func (b *BotEvent) BotCmdArgs(message string) ([]string, bool) {
 	switch {
+	case strings.HasPrefix(message, b.BotLinkIDForClient()):
+		return strings.Fields(message[len(b.BotLinkIDForClient()):]), true
 	case strings.HasPrefix(message, b.BotLinkID()):
 		return strings.Fields(message[len(b.BotLinkID()):]), true
 	case strings.HasPrefix(message, b.BotName()):

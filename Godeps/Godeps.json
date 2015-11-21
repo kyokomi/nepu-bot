@@ -1,9 +1,6 @@
 {
 	"ImportPath": "github.com/kyokomi/nepu-bot",
-	"GoVersion": "go1.5",
-	"Packages": [
-		"./..."
-	],
+	"GoVersion": "go1.5.1",
 	"Deps": [
 		{
 			"ImportPath": "github.com/PuerkitoBio/goquery",
@@ -45,8 +42,8 @@
 		},
 		{
 			"ImportPath": "github.com/kyokomi/slackbot",
-			"Comment": "v2.1-4-g09f6c21",
-			"Rev": "09f6c21f2fc327cd26966cc72b21f7c456583172"
+			"Comment": "v3.0-3-g4746313",
+			"Rev": "4746313a967e0ae8bcadd006118d1f441d400b40"
 		},
 		{
 			"ImportPath": "github.com/labstack/echo",
@@ -73,10 +70,6 @@
 			"Rev": "67823cd24dece1b04cced3a0a0b3ca2bc84d875e"
 		},
 		{
-			"ImportPath": "github.com/shogo82148/go-shuffle",
-			"Rev": "c351b0256e6a2cd0504d014ad1f9a85c2b04007b"
-		},
-		{
 			"ImportPath": "github.com/vmihailenco/bufio",
 			"Rev": "24e7e48f60fc2d9e99e43c07485d9fff42051e66"
 		},
@@ -87,20 +80,24 @@
 		},
 		{
 			"ImportPath": "golang.org/x/net/context",
-			"Rev": "66f0418ca41253f8d1a024eb9754e9441a8e79b9"
+			"Rev": "b4e17d61b15679caf2335da776c614169a1b4643"
 		},
 		{
 			"ImportPath": "golang.org/x/net/html",
-			"Rev": "66f0418ca41253f8d1a024eb9754e9441a8e79b9"
+			"Rev": "b4e17d61b15679caf2335da776c614169a1b4643"
 		},
 		{
 			"ImportPath": "golang.org/x/net/websocket",
-			"Rev": "66f0418ca41253f8d1a024eb9754e9441a8e79b9"
+			"Rev": "b4e17d61b15679caf2335da776c614169a1b4643"
 		},
 		{
 			"ImportPath": "gopkg.in/airbrake/gobrake.v1",
 			"Comment": "v1.1",
 			"Rev": "f12667a6c3bda272083682a04a05ee7a14e55378"
+		},
+		{
+			"ImportPath": "gopkg.in/bsm/ratelimit.v1",
+			"Rev": "bda20d5067a03094fc6762f7ead53027afac5f28"
 		},
 		{
 			"ImportPath": "gopkg.in/bufio.v1",
@@ -116,6 +113,11 @@
 			"ImportPath": "gopkg.in/redis.v2",
 			"Comment": "v2.3.2",
 			"Rev": "e6179049628164864e6e84e973cfb56335748dea"
+		},
+		{
+			"ImportPath": "gopkg.in/redis.v3",
+			"Comment": "v3.2.0",
+			"Rev": "7baacea8fb3cb99899582abb6fa2b5c280ce015d"
 		},
 		{
 			"ImportPath": "gopkg.in/vmihailenco/msgpack.v1",

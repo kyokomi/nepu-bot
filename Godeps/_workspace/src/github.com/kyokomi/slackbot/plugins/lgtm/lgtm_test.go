@@ -12,7 +12,7 @@ import (
 var testEvent = plugins.NewTestEvent("LGTM")
 
 func TestCheckMessage(t *testing.T) {
-	p := lgtm.Plugin{}
+	p := lgtm.NewPlugin()
 	ok, _ := p.CheckMessage(testEvent, testEvent.BaseText())
 	if !ok {
 		t.Errorf("ERROR check = NG")
@@ -20,7 +20,7 @@ func TestCheckMessage(t *testing.T) {
 }
 
 func TestDoAction(t *testing.T) {
-	p := lgtm.Plugin{}
+	p := lgtm.NewPlugin()
 
 	next := p.DoAction(testEvent, testEvent.BaseText())
 
@@ -40,5 +40,16 @@ func TestGetLGTMImageURL(t *testing.T) {
 		t.Errorf("get lgtm image don't error %s", message)
 	} else {
 		fmt.Println(message)
+	}
+}
+
+func TestDoActionArgsUser(t *testing.T) {
+	p := lgtm.NewPlugin()
+
+	testEvent := plugins.NewTestEvent("LGTM kyokomi")
+	next := p.DoAction(testEvent, testEvent.BaseText())
+
+	if next != false {
+		t.Errorf("ERROR next != false")
 	}
 }
