@@ -18,19 +18,19 @@ const (
 
 var rd = rand.New(rand.NewSource(time.Now().UnixNano()))
 
-type Plugin struct {
+type plugin struct {
 	docomo  plugins.BotMessagePlugin
-	Plugins plugins.PluginManager // TODO: ちょと無理矢理...
+	Plugins plugins.PluginManager
 }
 
 func NewPlugin(pm plugins.PluginManager, docomoClient *godocomo.Client, repository slackbot.Repository) plugins.BotMessagePlugin {
-	return &Plugin{
+	return &plugin{
 		docomo:  docomo.NewPlugin(docomoClient, repository),
 		Plugins: pm,
 	}
 }
 
-func (r *Plugin) CheckMessage(event plugins.BotEvent, message string) (bool, string) {
+func (r *plugin) CheckMessage(event plugins.BotEvent, message string) (bool, string) {
 	if ok, message := r.docomo.CheckMessage(event, message); ok {
 		return true, message
 	}
@@ -43,7 +43,7 @@ func (r *Plugin) CheckMessage(event plugins.BotEvent, message string) (bool, str
 	return false, ""
 }
 
-func (r *Plugin) DoAction(event plugins.BotEvent, message string) bool {
+func (r *plugin) DoAction(event plugins.BotEvent, message string) bool {
 	if strings.Index(message, "静かに") != -1 {
 		r.Plugins.StopReply()
 		go func() {
@@ -62,4 +62,18 @@ func (r *Plugin) DoAction(event plugins.BotEvent, message string) bool {
 	), message)
 }
 
-var _ plugins.BotMessagePlugin = (*Plugin)(nil)
+func (r *plugin) Help() string {
+	return `nepu-bot: ネプテューヌbot
+	超次元ゲイムネプテューヌのいーすんことイストワールのbot
+
+	パッシブスキル:
+
+		5回に1回くらいの割合で会話に混ざる
+
+	アクティブスキル:
+
+		静かに: 5分間Slackへの投稿を控える
+	`
+}
+
+var _ plugins.BotMessagePlugin = (*plugin)(nil)

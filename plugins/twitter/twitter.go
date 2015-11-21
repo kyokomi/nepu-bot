@@ -7,15 +7,15 @@ import (
 	"github.com/kyokomi/slackbot/plugins"
 )
 
-type Plugin struct {
+type plugin struct {
 	accessToken string
 }
 
-func (r Plugin) CheckMessage(_ plugins.BotEvent, message string) (bool, string) {
+func (r plugin) CheckMessage(_ plugins.BotEvent, message string) (bool, string) {
 	return strings.Contains(message, "いーすん画像"), message
 }
 
-func (r Plugin) DoAction(event plugins.BotEvent, message string) bool {
+func (r plugin) DoAction(event plugins.BotEvent, message string) bool {
 	if r.accessToken == "" {
 		token, err := newAccessToken("", "")
 		if err != nil {
@@ -37,4 +37,12 @@ func (r Plugin) DoAction(event plugins.BotEvent, message string) bool {
 	return false
 }
 
-var _ plugins.BotMessagePlugin = (*Plugin)(nil)
+func (p *plugin) Help() string {
+	return `twitter: いーすん画像表示
+	いーすん画像:
+
+		ネプテューヌシリーズの画像をTwitterから検索する。
+	`
+}
+
+var _ plugins.BotMessagePlugin = (*plugin)(nil)

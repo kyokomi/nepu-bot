@@ -11,6 +11,7 @@ import (
 	"github.com/zenazn/goji/bind"
 
 	"github.com/kyokomi/go-docomo/docomo"
+	"github.com/kyokomi/goroku"
 	"github.com/kyokomi/nepu-bot/plugins/nepubot"
 	"github.com/kyokomi/slackbot"
 	"github.com/kyokomi/slackbot/plugins/cron"
@@ -46,18 +47,19 @@ func main() {
 		panic(err)
 	}
 	// cronを設定
-	cronCtx := cron.NewCronContext(cron.NewHerokuRedisRepository())
+	addr, pass := goroku.GetHerokuRedisAddr()
+	cronCtx := cron.NewCronContext(cron.NewRedisRepository(addr, pass, 1))
 	defer cronCtx.Close()
 	cronCtx.AllRefreshCron(botCtx)
 
 	d := docomo.NewClient(apikey)
 	redisRepository := NewRedisRepository()
 	// add plugin
-	botCtx.AddPlugin("cron", cron.Plugin{CronContext: cronCtx})
+	botCtx.AddPlugin("cron", cron.NewPlugin(cronCtx))
 	botCtx.AddPlugin("koha", kohaimage.NewPlugin(kohaimage.NewKohaAPI()))
-	botCtx.AddPlugin("naruhodo", naruhodo.Plugin{})
-	botCtx.AddPlugin("lgtm", lgtm.Plugin{})
-	botCtx.AddPlugin("suddendeath", suddendeath.Plugin{})
+	botCtx.AddPlugin("naruhodo", naruhodo.NewPlugin())
+	botCtx.AddPlugin("lgtm", lgtm.NewPlugin())
+	botCtx.AddPlugin("suddendeath", suddendeath.NewPlugin())
 	botCtx.AddPlugin("nepu", nepubot.NewPlugin(botCtx.Plugins, d, redisRepository))
 
 	// start
